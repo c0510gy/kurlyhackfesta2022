@@ -10,9 +10,16 @@ async function signOut() {
   }
 }
 
+const printT = ():void => {
+  Auth.currentAuthenticatedUser().then((receivedUser) => {
+    console.log("Token: ", receivedUser.signInUserSession.accessToken.jwtToken)
+  })
+}
+
 const Layouts = () => {
   return (
     <>
+      <button onClick={printT}>token print</button>
       <button onClick={signOut}>Sign out!!!</button>
       <Outlet />
     </>
