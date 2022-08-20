@@ -1,0 +1,44 @@
+@import '../../scss/config.scss';
+
+.header {
+  background-color: $white;
+  color: $kurly-signature;
+  box-shadow: 0 2px 6px 0px rgba(0, 0, 0, 0.05);
+
+  .contents {
+    padding: 10px 80px;
+    margin: 0 auto;
+    // width: 1050px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .logo {
+      font-size: 25px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    ul {
+      display: grid;
+      grid-auto-flow: column;
+      grid-gap: 12px;
+
+      li {
+        font-weight: 600;
+
+        a {
+          padding: 5px 0;
+        }
+
+        .activeLink {
+          color: $kurly-signature;
+          text-decoration: underline;
+        }
+        .link {
+          color: $greish-black;
+        }
+      }
+    }
+  }
+}
