@@ -1,0 +1,54 @@
+@import '../../../scss/config.scss';
+
+.basketView {
+  padding: 25px 15px;
+
+  table {
+    display: table;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 1px;
+    background-color: $white;
+    font-size: 15px;
+
+    .tableBody {
+      display: table-row-group;
+
+      tr {
+        border: 1px solid $greyish-black;
+        display: table-row;
+        vertical-align: middle;
+        outline: 0;
+
+        .tdEnter {
+          font-weight: 400;
+          font-size: 0.9rem;
+          line-height: 1.43;
+          letter-spacing: 0.01071em;
+          display: table-cell;
+          vertical-align: inherit;
+          text-align: left;
+          padding: 1px;
+          color: rgba(0, 0, 0, 0.87);
+          border-bottom: 1.25rem solid;
+          border-color: white;
+          text-align: center;
+        }
+        .tdNoEnter {
+          font-weight: 400;
+          font-size: 0.9rem;
+          line-height: 1.43;
+          letter-spacing: 0.01071em;
+          display: table-cell;
+          vertical-align: inherit;
+          text-align: left;
+          padding: 1px;
+          color: rgba(0, 0, 0, 0.87);
+          border-top: 1.25rem solid;
+          border-color: white;
+          text-align: center;
+        }
+      }
+    }
+  }
+}
