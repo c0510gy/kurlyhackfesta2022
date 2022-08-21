@@ -1,16 +1,14 @@
 import { makeAutoObservable } from 'mobx'
 
-const authStore = function createAuthStore(idToken?: string, accessToken?: string, name?: string) {
+const authStore = function createAuthStore() {
     return makeAutoObservable({
-        idToken,
-        accessToken,
-        name,
-        updateAuth(newIdToken?: string, newAccessToken?: string, newName?: string) {
-            idToken = newIdToken || idToken;
-            accessToken = newAccessToken || accessToken;
-            name = newName || name;
+        idToken: "",
+        accessToken: "",
+        name: "",
+        updateToken: (id: string) => {
+            this.idToken = id
         }
-    })
-}
+    });
+};
 
 export default authStore;
