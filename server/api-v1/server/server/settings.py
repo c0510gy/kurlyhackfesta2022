@@ -42,9 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'background_task',
     'corsheaders',
     'accounts',
     'api',
+    'simulator',
 ]
 
 MIDDLEWARE = [
@@ -58,12 +60,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Django Background Tasks
+BACKGROUND_TASK_RUN_ASYNC = False
+
+# corsheaders
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
 
+# django cognito JWT
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'django_cognito_jwt.JSONWebTokenAuthentication',
