@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'background_task',
     'corsheaders',
+    'drf_yasg',
     'accounts',
     'api',
     'simulator',
@@ -59,6 +60,17 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# swagger for documentation
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization'
+        }
+    },
+}
 
 # Django Background Tasks
 BACKGROUND_TASK_RUN_ASYNC = False
