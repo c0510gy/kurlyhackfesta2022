@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import styles from './index.module.scss';
 import useStores from '../../hooks/useStores';
 import { Auth } from 'aws-amplify';
+import { observer } from 'mobx-react-lite'
 
 const Landing: React.FunctionComponent = (): JSX.Element => {
   const { authStore } = useStores();
@@ -19,8 +20,9 @@ const Landing: React.FunctionComponent = (): JSX.Element => {
       <div>{/* Simulator control button section */}</div>
       {/* Manual */}
       <h2>Manual</h2>
+      <h2 >{`Welcome ${authStore.name}`}</h2>
     </div>
   );
 };
 
-export default Landing;
+export default observer(Landing);
