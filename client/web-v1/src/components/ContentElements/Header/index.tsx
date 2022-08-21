@@ -36,12 +36,14 @@ const Header: React.FunctionComponent = (): JSX.Element => {
                   </li>
                 );
               })}
+              <li>
+                <Button className={styles.signOutBtn} type={'button'} clickHandler={authStore.signOut}>
+                  Sign Out
+                </Button>
+              </li>
             </ul>
           </nav>
         </div>
-        <Button className={styles.signOutBtn} type={'button'} clickHandler={authStore.signOut}>
-          Sign Out
-        </Button>
       </div>
     </header>
   );
