@@ -3,24 +3,22 @@ import { Outlet } from 'react-router-dom';
 import Header from '../components/ContentElements/Header';
 import { Auth } from 'aws-amplify';
 import { fetchTest } from '../utils/utility';
+import useStores from '../hooks/useStores'
 
-async function signOut() {
-  try {
-    await Auth.signOut();
-  } catch (error) {
-    console.log('error signing out: ', error);
-  }
-}
-
-const printT = (): void => {
-  Auth.currentAuthenticatedUser().then((receivedUser) => {
-    console.log(receivedUser.signInUserSession);
-    console.log('idToken: ', receivedUser.signInUserSession.idToken.jwtToken);
-    fetchTest();
-  });
-};
 
 const Layouts: React.FunctionComponent = () => {
+  const printT = (): void => {
+    Auth.currentAuthenticatedUser().then((receivedUser) => {
+      console.log(receivedUser.signInUserSession);
+      console.log('idToken: ', receivedUser.signInUserSession.idToken.jwtToken);
+      fetchTest();
+    });
+  };
+  const { authStore } = useStores();
+  const signOut = async () => {
+    await Auth.signOut();
+    authStore.removeToken();
+  }
   return (
     <>
       <Header />

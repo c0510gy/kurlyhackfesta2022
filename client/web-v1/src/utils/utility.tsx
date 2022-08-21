@@ -1,13 +1,12 @@
 import axios from 'axios';
-import {Auth} from "aws-amplify";
-
+import useStores from '../hooks/useStores';
 
 export const fetchTest = async () => {
-  const user = await Auth.currentAuthenticatedUser();
-  console.log(user.signInUserSession.idToken.jwtToken)
+  const { authStore } = useStores()
+
   const { data } = await axios.get(`http://localhost:8000/accounts/me`, {
     params: {  },
-    headers: { Authorization: `Bearer ${user.signInUserSession.idToken.jwtToken}` },
+    headers: { Authorization: `Bearer ${authStore.getIdToken()}` },
   });
 
   if (data.error) {
