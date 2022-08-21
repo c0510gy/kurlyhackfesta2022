@@ -4,6 +4,8 @@
   "description": "",
   "main": "webpack.config.js",
   "dependencies": {
+    "@aws-amplify/ui-react": "^1.2.5",
+    "aws-amplify": "^4.3.32",
     "mobx": "^6.6.1",
     "mobx-react-lite": "^3.4.0",
     "react": "^18.2.0",
@@ -52,7 +54,6 @@
     "dev": "webpack serve",
     "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "husky install",
     "lint": "eslint"
   },
   "keywords": [],

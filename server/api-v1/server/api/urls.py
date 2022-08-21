@@ -1,7 +1,7 @@
-from django.urls import path, include
-from .views import UserViewAPI
+from django.urls import path
+from .views import TestTableViewAPI
 
 
 urlpatterns = [
-    path('users/', UserViewAPI.as_view())
+    path('test/', TestTableViewAPI.as_view())
 ]
