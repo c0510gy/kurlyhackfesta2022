@@ -1,8 +1,12 @@
-@import '../../scss/config.scss';
+@import '../../../scss/config.scss';
 
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   background-color: $white;
   color: $kurly-signature;
+  background-color: $white;
   box-shadow: 0 2px 6px 0px rgba(0, 0, 0, 0.05);
 
   .contents {
@@ -17,6 +21,12 @@
       font-size: 25px;
       font-weight: 700;
       cursor: pointer;
+      text-transform: uppercase;
+      background: linear-gradient(to right, $sapphire 0%, $kurly-signature 100%);
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
     }
 
     ul {
@@ -36,7 +46,7 @@
           text-decoration: underline;
         }
         .link {
-          color: $greish-black;
+          color: $greyish-black;
         }
       }
     }

@@ -1,0 +1,26 @@
+@import '../../scss/config.scss';
+
+.container {
+  @include alignContent;
+
+  .btnWrapper {
+    button {
+      padding: 5px 10px 8px 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: $greyish-black;
+    }
+
+    .selectedBtn {
+      background-color: $light-purple;
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+      font-weight: 600;
+    }
+  }
+
+  section {
+    background-color: $light-purple;
+    min-width: 900px;
+  }
+}

@@ -7,6 +7,13 @@ $charcoal: #545454;
 $dark-charcoal: #4c4c4c;
 $red: #ff0000;
 $grey: #efefef;
-$greish-black: #333333;
+$greyish-black: #333333;
 $kurly-signature: #5f0180;
+$light-purple: #e6e6fa;
+$sapphire: #30cfd0;
 $white: #ffffff;
+
+@mixin alignContent {
+  margin: 0 auto;
+  padding: 0 150px;
+}
