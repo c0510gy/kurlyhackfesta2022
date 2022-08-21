@@ -1,0 +1,67 @@
+@import '../../../scss/config.scss';
+
+.listView {
+  padding: 25px 15px;
+
+  .tableWrapper {
+    max-height: 450px;
+    overflow-y: auto;
+    table {
+      display: table;
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background-color: $white;
+
+      thead {
+        display: table-header-group;
+
+        tr {
+          position: sticky;
+          top: 0;
+          color: inherit;
+          display: table-row;
+          vertical-align: middle;
+          outline: 0;
+          background-color: $grey;
+
+          th {
+            min-width: 110px;
+            padding: 15px;
+            font-weight: 500;
+            font-size: 14px;
+            display: table-cell;
+            vertical-align: inherit;
+            border-bottom: 1px solid rgba(224, 224, 224, 1);
+            text-align: left;
+            color: rgba(0, 0, 0, 0.87);
+          }
+        }
+      }
+
+      .tableBody {
+        display: table-row-group;
+
+        tr {
+          border: 1px solid $greyish-black;
+          color: inherit;
+          display: table-row;
+          vertical-align: middle;
+          outline: 0;
+
+          td {
+            font-weight: 400;
+            font-size: 0.875rem;
+            line-height: 1.43;
+            letter-spacing: 0.01071em;
+            display: table-cell;
+            vertical-align: inherit;
+            text-align: left;
+            padding: 16px;
+            color: rgba(0, 0, 0, 0.87);
+          }
+        }
+      }
+    }
+  }
+}
