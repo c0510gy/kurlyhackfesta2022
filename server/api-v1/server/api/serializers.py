@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from .models import User
+from .models import TestTable
 
 
-class UserSerializer(serializers.ModelSerializer):
+class TestTableSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ('id', 'username', 'email')
-        read_only_fields = ('created_at',)
+        model = TestTable
+        fields = ('id', 'user_id', 'test')
+        read_only_fields = ('created_at', 'updated_at')

@@ -11,9 +11,13 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+with open('{}/config.json'.format(BASE_DIR), 'r') as f:
+    CONFIG = json.load(f)
 
 
 # Quick-start development settings - unsuitable for production
@@ -38,10 +42,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
+    'accounts',
     'api',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -50,6 +57,28 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'django_cognito_jwt.JSONWebTokenAuthentication',
+    ],
+}
+
+# Cognito Setting
+COGNITO_AWS_REGION = CONFIG['COGNITO']['REGION']
+COGNITO_USER_POOL = CONFIG['COGNITO']['USER_POOL_ID']
+COGNITO_AUDIENCE = CONFIG['COGNITO']['APP_CLIENT_ID']
+
+COGNITO_PUBLIC_KEYS_CACHING_ENABLED = True
+COGNITO_PUBLIC_KEYS_CACHING_TIMEOUT = 60*60*24  # 24h caching, default is 300s
+
+AUTH_USER_MODEL = 'accounts.User'
 
 ROOT_URLCONF = 'server.urls'
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import {Auth} from "aws-amplify";
+import {fetchTest} from '../utils/utility'
 
 async function signOut() {
   try {
@@ -12,7 +13,9 @@ async function signOut() {
 
 const printT = ():void => {
   Auth.currentAuthenticatedUser().then((receivedUser) => {
-    console.log("Token: ", receivedUser.signInUserSession.accessToken.jwtToken)
+    console.log(receivedUser.signInUserSession)
+    console.log("idToken: ", receivedUser.signInUserSession.idToken.jwtToken)
+    fetchTest()
   })
 }
 

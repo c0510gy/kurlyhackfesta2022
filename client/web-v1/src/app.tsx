@@ -3,19 +3,31 @@ import { Route, Routes } from 'react-router-dom';
 import Layouts from './layout';
 import Landing from './pages/Landing';
 import { Amplify } from "aws-amplify";
-import { withAuthenticator } from "@aws-amplify/ui-react";
+import { AmplifyAuthenticator, AmplifySignIn } from "@aws-amplify/ui-react";
 import awsconfig from "./awsconfig.js";
 
 Amplify.configure(awsconfig);
 
 const App = (): JSX.Element => {
   return (
-    <Routes>
+    <AmplifyAuthenticator>
+      <AmplifySignIn
+        slot="sign-in"
+        headerText="Gravimetric Dashboard Sign In"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <div slot="secondary-footer-content"></div> {/* 회원가입 버튼 안보이게 */}
+      </AmplifySignIn>
+      <Routes>
         <Route path="/" element={<Layouts />}>
           <Route index element={<Landing />} />
         </Route>
-    </Routes>
+      </Routes>
+    </AmplifyAuthenticator>
   );
 };
 
-export default withAuthenticator(App);
+export default App;
