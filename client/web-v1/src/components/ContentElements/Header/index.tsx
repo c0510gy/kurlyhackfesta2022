@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Fulfillment } from './type';
+import Button from '../../ReusableElements/Button';
+import useStores from '../../../hooks/useStores';
 import styles from './index.module.scss';
 
 /* TODO : should we use enum type for text or not? */
@@ -11,7 +13,9 @@ const routes = [
   { path: '/delivery', text: Fulfillment.Delivery },
 ];
 
-const Header = () => {
+const Header: React.FunctionComponent = (): JSX.Element => {
+  const { authStore } = useStores();
+
   return (
     <header className={styles.header}>
       <div className={styles.contents}>
@@ -35,6 +39,9 @@ const Header = () => {
             </ul>
           </nav>
         </div>
+        <Button className={styles.signOutBtn} type={'button'} clickHandler={authStore.signOut}>
+          Sign Out
+        </Button>
       </div>
     </header>
   );

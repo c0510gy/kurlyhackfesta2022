@@ -3,10 +3,9 @@ import { Outlet } from 'react-router-dom';
 import Header from '../components/ContentElements/Header';
 import { Auth } from 'aws-amplify';
 import { fetchTest } from '../utils/utility';
-import useStores from '../hooks/useStores'
-
 
 const Layouts: React.FunctionComponent = () => {
+  /* TODO : Remove the below button  */
   const printT = (): void => {
     Auth.currentAuthenticatedUser().then((receivedUser) => {
       console.log(receivedUser.signInUserSession);
@@ -14,16 +13,11 @@ const Layouts: React.FunctionComponent = () => {
       fetchTest();
     });
   };
-  const { authStore } = useStores();
-  const signOut = async () => {
-    await Auth.signOut();
-    authStore.removeToken();
-  }
+
   return (
     <>
       <Header />
       <button onClick={printT}>token print</button>
-      <button onClick={signOut}>Sign out!!!</button>
       <Outlet />
     </>
   );
