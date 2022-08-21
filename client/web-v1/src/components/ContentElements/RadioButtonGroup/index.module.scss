@@ -1,0 +1,69 @@
+@import '../../../scss/config.scss';
+
+.container {
+  .text {
+    width: auto;
+    height: 18px;
+    font-family: NotoSansKR, AppleSDGothicNeo, sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: $black;
+    margin-bottom: 15px;
+    display: inline-flex;
+  }
+
+  .radioArea {
+    display: flex;
+    flex-wrap: wrap;
+    .label {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      width: auto;
+      height: auto;
+      font-size: 16px;
+      color: $dark-charcoal;
+      margin-right: 50px;
+
+      /* Hide the browser's default radio button */
+      input {
+        display: none;
+      }
+      /* Show the indicator (dot/circle) when checked */
+      :checked ~ .checkmark:after {
+        display: block;
+        background-color: $kurly-signature;
+      }
+
+      .checkmark {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        height: 14px;
+        width: 14px;
+        border: 1px solid $dark-charcoal;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+      /*  Create the indicator (the dot/circle - hidden when not checked) */
+      :after {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+
+      /* When the radio button is checked, add a blue background */
+      input:checked ~ .checkmark {
+        border: 1px solid $kurly-signature;
+      }
+    }
+    :hover {
+      cursor: pointer;
+    }
+  }
+}

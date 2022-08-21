@@ -11,7 +11,7 @@ const routes = [
   { path: '/delivery', text: Fulfillment.Delivery },
 ];
 
-const Header = () => {
+const Header: React.FunctionComponent = () => {
   return (
     <header className={styles.header}>
       <div className={styles.contents}>

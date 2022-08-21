@@ -16,7 +16,7 @@ const defaultStyle: React.CSSProperties = {
   cursor: 'pointer',
 };
 
-const Button = function buttonElement({
+const Button: React.FunctionComponent<ButtonProps> = ({
   style,
   className,
   type,
@@ -24,7 +24,7 @@ const Button = function buttonElement({
   children,
   clickHandler,
   disabled,
-}: ButtonProps): JSX.Element {
+}: ButtonProps): JSX.Element => {
   return (
     <button
       style={{ ...style, ...defaultStyle }}
