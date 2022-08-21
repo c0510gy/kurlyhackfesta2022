@@ -72,6 +72,8 @@ const BasketView = () => {
     const workerId = getRandomInt(5, 0);
     const productId = getRandomInt(10, 0);
     const predict = getRandomInt(2, 0) === 1 ? "True" : "False";
+    if (pickingEvents[basketIndex]?.predict === 'True')
+      return;
     pickingEvents[basketIndex] = {worker_id: workerId, basket_id: basketIndex, product_id: productId, predict: predict}
     const [row, col] = [Math.floor(basketIndex/100), Math.floor(Math.floor(basketIndex%100)/5)];
     countErrorBaskets(pickingList[row][col], row, col);
