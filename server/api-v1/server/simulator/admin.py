@@ -5,19 +5,19 @@ from .models import PickingDetectionEvent, PackingDetectionEvent, DeliveryDetect
 class AdminPickingDetectionEvent(admin.ModelAdmin):
     model = PickingDetectionEvent
     list_display = ('id', 'worker_id', 'busket_id',
-                    'product_id', 'weight', 'operation', 'label', 'created_at', 'updated_at')
+                    'product_id', 'weight', 'operation', 'pred', 'label', 'created_at', 'updated_at')
 
 
 class AdminPackingDetectionEvent(admin.ModelAdmin):
     model = PackingDetectionEvent
     list_display = ('id', 'worker_id', 'package_id',
-                    'filling_id', 'weight', 'operation', 'label', 'created_at', 'updated_at')
+                    'filling_id', 'weight', 'operation', 'pred', 'label', 'created_at', 'updated_at')
 
 
 class AdminDeliveryDetectionEvent(admin.ModelAdmin):
     model = PackingDetectionEvent
     list_display = ('id', 'worker_id', 'package_id',
-                    'region_id', 'weight', 'operation', 'label', 'created_at', 'updated_at')
+                    'region_id', 'weight', 'operation', 'pred', 'label', 'created_at', 'updated_at')
 
 
 admin.site.register(PickingDetectionEvent, AdminPickingDetectionEvent)

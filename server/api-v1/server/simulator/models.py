@@ -11,6 +11,7 @@ class PickingDetectionEvent(models.Model):
     product_id = models.IntegerField(null=False)
     weight = models.FloatField(null=False)
     operation = models.CharField(null=False, max_length=40)
+    pred = models.BooleanField(null=True)
     label = models.BooleanField(null=False)
 
     created_at = models.DateTimeField(default=timezone.now)
@@ -32,6 +33,7 @@ class PackingDetectionEvent(models.Model):
     filling_id = models.IntegerField(null=False)
     weight = models.FloatField(null=False)
     operation = models.CharField(null=False, max_length=40)
+    pred = models.BooleanField(null=True)
     label = models.BooleanField(null=False)
 
     created_at = models.DateTimeField(default=timezone.now)
@@ -53,6 +55,7 @@ class DeliveryDetectionEvent(models.Model):
     region_id = models.IntegerField(null=False)
     weight = models.FloatField(null=False)
     operation = models.CharField(null=False, max_length=40)
+    pred = models.BooleanField(null=True)
     label = models.BooleanField(null=False)
 
     created_at = models.DateTimeField(default=timezone.now)
