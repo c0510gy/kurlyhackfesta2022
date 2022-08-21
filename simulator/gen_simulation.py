@@ -138,7 +138,7 @@ def create_packing(num_orders, num_fillings, num_workers, human_error_prob=0.02)
             weight = error_weight
         if error:
             human_errors[package_id] = True
-        logs.append([worker_id, package_id, filling_id, weight, 'PUT', error])
+        logs.append([worker_id, package_id, -1, weight, 'PUT', error])
         rem_fillings[package_id] -= 1
         if rem_fillings[package_id] == 0:
             logs.append([worker_id, package_id, filling_id,
