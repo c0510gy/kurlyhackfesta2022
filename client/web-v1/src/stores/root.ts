@@ -1,14 +1,14 @@
 import uiStore from './ui';
-import authStore from './auth'
+import eventStore from './event';
 
 export interface RootStore {
   uiStore: ReturnType<typeof uiStore>;
-  authStore: ReturnType<typeof authStore>;
+  eventStore: ReturnType<typeof eventStore>;
 }
 
 const rootStore: RootStore = {
   uiStore: uiStore(),
-  authStore: authStore(),
+  eventStore: eventStore(),
 };
 
 export default rootStore;
