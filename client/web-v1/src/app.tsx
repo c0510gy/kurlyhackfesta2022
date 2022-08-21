@@ -8,16 +8,34 @@ import Picking from './pages/Picking';
 import Packing from './pages/Packing';
 import Delivery from './pages/Delivery';
 
+import { Amplify } from 'aws-amplify';
+import { AmplifyAuthenticator, AmplifySignIn } from '@aws-amplify/ui-react';
+import awsconfig from './awsconfig.js';
+
+Amplify.configure(awsconfig);
+
 const App = (): JSX.Element => {
   return (
-    <Routes>
-      <Route path="/" element={<Layouts />}>
-        <Route index element={<Landing />} />
-        <Route path="picking" element={<Picking />} />
-        <Route path="packing" element={<Packing />} />
-        <Route path="delivery" element={<Delivery />} />
-      </Route>
-    </Routes>
+    <AmplifyAuthenticator>
+      <AmplifySignIn
+        slot="sign-in"
+        headerText="Gravimetric Dashboard Sign In"
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        <div slot="secondary-footer-content"></div> {/* 회원가입 버튼 안보이게 */}
+      </AmplifySignIn>
+      <Routes>
+        <Route path="/" element={<Layouts />}>
+          <Route index element={<Landing />} />
+          <Route path="picking" element={<Picking />} />
+          <Route path="packing" element={<Packing />} />
+          <Route path="delivery" element={<Delivery />} />
+        </Route>
+      </Routes>
+    </AmplifyAuthenticator>
   );
 };
 
