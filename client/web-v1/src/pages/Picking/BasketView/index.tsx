@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './index.module.scss';
 
 /* TODO : get events from event store observerble */
-const pickingEvents = new Array(200);
+const pickingEvents = new Array(1000);
 
 for(let i=0; i<1000; ++i) {
   pickingEvents[i] = {};
@@ -16,6 +16,7 @@ pickingEvents[3] = { worker_id: 2, busket_id: 1, product_id: 9, weight: 0.496973
 pickingEvents[4] = { worker_id: 2, busket_id: 1, product_id: 9, weight: 0.4969732191272813, operation: 'PUT', label: 'False', predict: 'True'};
 pickingEvents[5] = { worker_id: 2, busket_id: 1, product_id: 9, weight: 0.4969732191272813, operation: 'PUT', label: 'False', predict: 'True'};
 pickingEvents[6] = { worker_id: 2, busket_id: 1, product_id: 9, weight: 0.4969732191272813, operation: 'PUT', label: 'False', predict: 'True'};
+pickingEvents[102] = { worker_id: 2, busket_id: 1, product_id: 9, weight: 0.4969732191272813, operation: 'PUT', label: 'False', predict: 'True'};
 
 const BasketView = () => {
   const [pickingList, setPickingList] = useState([]);
@@ -27,10 +28,19 @@ const BasketView = () => {
     setPickingList(tempArr);
   }, []);
 
-  const handleChange = (rowIdx:number, colIdx:number, value:number) => {
+  const changeHandler = (rowIdx:number, colIdx:number, value:number) => {
     const copy = [...pickingList];
     copy[rowIdx][colIdx] = value;
     setPickingList(copy);
+  }
+
+  const clickHander = (rowIdx: number, colIdx: number) => {
+    console.log("These baskets are in error")
+    for (let i=0; i<5; ++i){
+      if (pickingEvents[rowIdx*100 + colIdx*5 + i].predict !== 'True')
+        continue;
+      console.log("Basket id: ", rowIdx*100 + colIdx*5 + i)
+    }
   }
 
   return (
@@ -55,10 +65,17 @@ const BasketView = () => {
                     }
 
                     if (errorBasketSum !== errorBasketSumOrigin) {
-                      handleChange(rowIdx, colIdx, errorBasketSum);
+                      changeHandler(rowIdx, colIdx, errorBasketSum);
                     }
-                    return <td key={colIdx} className={rowIdx%2 ? styles.tdEnter : styles.tdNoEnter}
-                            style={errorBasketSum ? {"color": "red", "backgroundColor": "pink"} : {"backgroundColor" : "green"}}>{pickingList[rowIdx][colIdx]}</td>
+                    return <td
+                            key={colIdx}
+                            className={rowIdx%2 ? styles.tdEnter : styles.tdNoEnter}
+                            onClick={errorBasketSum ? () => clickHander(rowIdx, colIdx) : null}
+                            style={errorBasketSum 
+                              ? {"color": "red", "backgroundColor": "pink", "cursor": "pointer"}
+                              : {"backgroundColor" : "green", "cursor": "default"}}>
+                                {pickingList[rowIdx][colIdx]}
+                           </td>
                   })}
               </tr>
             )
