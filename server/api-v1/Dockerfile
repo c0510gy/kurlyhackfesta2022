@@ -1,5 +1,3 @@
-#!/bin/bash
-
 FROM --platform=linux/arm64/v8 python:3.8
 
 # development || production

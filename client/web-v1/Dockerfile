@@ -1,5 +1,3 @@
-#!/bin/bash
-
 FROM --platform=linux/arm64/v8 node:14.18.2
 
 RUN mkdir -p /gravimetric_web
