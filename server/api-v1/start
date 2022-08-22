@@ -1,0 +1,14 @@
+#!/bin/bash
+
+cd /gravimetric/server/
+
+python3 manage.py makemigrations
+python3 manage.py migrate --run-syncdb
+DJANGO_SUPERUSER_USERNAME=serveradmin \
+DJANGO_SUPERUSER_PASSWORD=serveradmin \
+python3 manage.py createsuperuser --email "admin@admin.com" --noinput
+python3 manage.py process_tasks --queue picking-queue &
+python3 manage.py process_tasks --queue packing-queue &
+python3 manage.py process_tasks --queue delivery-queue &
+
+[ "$PYTHON_ENV" == "development" ] && (python3 manage.py runserver 0.0.0.0:8000 --insecure) || (python3 manage.py runserver 0.0.0.0:8000 --insecure)

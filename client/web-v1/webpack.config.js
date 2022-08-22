@@ -2,10 +2,10 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const isDevMode = process.env.NODE_ENV === 'development';
+const isDevMode = process.env.NODE_ENV !== 'production';
 
 module.exports = {
-  mode: 'development',
+  mode: isDevMode ? 'development' : 'production',
   entry: ['./src/index.tsx'],
   devtool: 'source-map',
   module: {
@@ -99,6 +99,7 @@ module.exports = {
     static: './dist',
     port: 3000,
     hot: true,
+    allowedHosts: "all",
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -109,4 +110,9 @@ module.exports = {
       chunkFilename: isDevMode ? '[id].css' : '[id].[contenthash].css',
     }),
   ],
+  performance: {
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000,
+    hints: false,
+  },
 };
