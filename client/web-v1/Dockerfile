@@ -1,4 +1,4 @@
-FROM node:14.18.2
+FROM --platform=linux/arm64/v8 node:14.18.2
 
 RUN mkdir /gravimetric_web
 WORKDIR /gravimetric_web
