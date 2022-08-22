@@ -1,4 +1,4 @@
-FROM arm64v8/python:3.8
+FROM python:3.8
 
 # development || production
 ENV PYTHON_ENV production
