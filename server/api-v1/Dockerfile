@@ -11,7 +11,7 @@ WORKDIR /gravimetric
 
 ADD ./ /gravimetric/
 
-RUN pip install -r /gravimetric/requirements.txt
+RUN pip3 install -r /gravimetric/requirements.txt
 
 RUN chmod 755 /gravimetric/start
 EXPOSE 8000
