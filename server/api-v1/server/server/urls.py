@@ -19,8 +19,10 @@ from django.urls import path, include
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
+from .views import IndexViewAPI
 
 urlpatterns = [
+    path('/', IndexViewAPI.as_view()),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('api/', include('api.urls')),

@@ -99,6 +99,7 @@ module.exports = {
     static: './dist',
     port: 3000,
     hot: true,
+    allowedHosts: "all",
   },
   plugins: [
     new HtmlWebpackPlugin({
