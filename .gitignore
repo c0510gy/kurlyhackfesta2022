@@ -1,5 +1,6 @@
 config.json
-configs/
+**/configs/development.tsx
+**/configs/production.tsx
 node_modules
 dist
 *debug.log
