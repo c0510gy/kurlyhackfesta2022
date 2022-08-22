@@ -7,7 +7,7 @@ ENV PATH /gravimetric_web/node_modules/.bin:$PATH
 
 ADD ./ /gravimetric_web/
 
-RUN rm -rf ./node_modules
+#RUN rm -rf ./node_modules
 RUN npm install
 
 RUN chmod 755 /gravimetric_web/start
