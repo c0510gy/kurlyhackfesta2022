@@ -2,22 +2,38 @@ from background_task import background
 import pandas as pd
 import os
 from .models import PickingDetectionEvent, PackingDetectionEvent, DeliveryDetectionEvent
+from .models import PickingSimulationInfo, PackingSimulationInfo, DeliverySimulationInfo
 from .detection_module import statistical_detection
 import random
 import time
 
 
 @background(schedule=1, queue='picking-queue')
-def picking_simulation(min_interval=None, max_interval=None):
+def picking_simulation(her=None, winsize=-1, min_interval=0.1, max_interval=0.2):
 
     print('picking simulation started')
+    print(her, winsize, min_interval, max_interval)
 
     PickingDetectionEvent.objects.all().delete()
+    PickingSimulationInfo.objects.all().delete()
 
     module_dir = os.path.dirname(__file__)
-    file_path = os.path.join(module_dir, 'simulation_data', 'picking_df.csv')
+    log_file_path = os.path.join(
+        module_dir, 'simulation_data', 'picking_df.csv')
+    info_file_path = os.path.join(
+        module_dir, 'simulation_data', 'picking_info_df.csv')
 
-    log_df = pd.read_csv(file_path)
+    log_df = pd.read_csv(log_file_path)
+    info_df_row = pd.read_csv(info_file_path).iloc[0]
+
+    num_workers = info_df_row['num_workers']
+    num_buskets = info_df_row['num_buskets']
+    num_products = info_df_row['num_products']
+    human_error = info_df_row['human_error']
+    window_size = winsize
+
+    PickingSimulationInfo.objects.create(num_workers=num_workers, num_buskets=num_buskets,
+                                         num_products=num_products, human_error=human_error, window_size=window_size,)
 
     weight_collections = dict()
     pred_by_busket = dict()
@@ -53,16 +69,30 @@ def picking_simulation(min_interval=None, max_interval=None):
 
 
 @background(schedule=1, queue='packing-queue')
-def packing_simulation(min_interval=None, max_interval=None):
+def packing_simulation(her=None, winsize=-1, min_interval=0.1, max_interval=0.2):
 
     print('packing simulation started')
+    print(her, winsize, min_interval, max_interval)
 
     PackingDetectionEvent.objects.all().delete()
+    PackingSimulationInfo.objects.all().delete()
 
     module_dir = os.path.dirname(__file__)
     file_path = os.path.join(module_dir, 'simulation_data', 'packing_df.csv')
+    info_file_path = os.path.join(
+        module_dir, 'simulation_data', 'packing_info_df.csv')
 
     log_df = pd.read_csv(file_path)
+    info_df_row = pd.read_csv(info_file_path).iloc[0]
+
+    num_workers = info_df_row['num_workers']
+    num_packages = info_df_row['num_packages']
+    num_fillings = info_df_row['num_fillings']
+    human_error = info_df_row['human_error']
+    window_size = winsize
+
+    PackingSimulationInfo.objects.create(num_workers=num_workers, num_packages=num_packages,
+                                         num_fillings=num_fillings, human_error=human_error, window_size=window_size,)
 
     weight_collections = dict()
     pred_by_busket = dict()
@@ -98,16 +128,31 @@ def packing_simulation(min_interval=None, max_interval=None):
 
 
 @background(schedule=1, queue='delivery-queue')
-def delivery_simulation(min_interval=None, max_interval=None):
+def delivery_simulation(her=None, winsize=-1, min_interval=0.1, max_interval=0.2):
 
     print('delivery simulation started')
+    print(her, winsize, min_interval, max_interval)
 
     DeliveryDetectionEvent.objects.all().delete()
+    DeliverySimulationInfo.objects.all().delete()
 
     module_dir = os.path.dirname(__file__)
     file_path = os.path.join(module_dir, 'simulation_data', 'delivery_df.csv')
+    info_file_path = os.path.join(
+        module_dir, 'simulation_data', 'delivery_info_df.csv')
 
     log_df = pd.read_csv(file_path)
+    info_df_row = pd.read_csv(info_file_path).iloc[0]
+
+    num_workers = info_df_row['num_workers']
+    num_packages = info_df_row['num_packages']
+    num_regions = info_df_row['num_regions']
+    num_products = info_df_row['num_products']
+    human_error = info_df_row['human_error']
+    window_size = winsize
+
+    DeliverySimulationInfo.objects.create(num_workers=num_workers, num_packages=num_packages,
+                                          num_regions=num_regions, num_products=num_products, human_error=human_error, window_size=window_size,)
 
     for index, row in log_df.iterrows():
 

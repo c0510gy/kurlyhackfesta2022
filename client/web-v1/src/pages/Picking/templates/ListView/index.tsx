@@ -8,10 +8,10 @@ import { testOption } from '../../../../stores/event';
 import styles from './index.module.scss';
 
 const tableColumnByStep: { [key: string]: EventColumn[] } = {
-  [Fulfillment.Picking]: [
+  [Fulfillment.picking]: [
     EventColumn.id,
-    EventColumn.busket_id,
     EventColumn.worker_id,
+    EventColumn.busket_id,
     EventColumn.product_id,
     EventColumn.weight,
     EventColumn.operation,
@@ -19,12 +19,14 @@ const tableColumnByStep: { [key: string]: EventColumn[] } = {
     EventColumn.pred,
     EventColumn.created_at,
   ],
-  [Fulfillment.Packing]: [],
-  [Fulfillment.Delivery]: [],
+  [Fulfillment.packing]: [],
+  [Fulfillment.delivery]: [],
 };
 
 const ListView: React.FunctionComponent = () => {
   const { eventStore } = useStores();
+
+  if (!eventStore.fulfilmentStep) return;
 
   return (
     <div className={styles.listView}>
@@ -47,6 +49,7 @@ const ListView: React.FunctionComponent = () => {
                 <tr key={index}>
                   {Object.entries(event).map(([key, value], index) => {
                     if (key === 'label') return;
+
                     return <td key={index}>{value}</td>;
                   })}
                 </tr>
