@@ -51,12 +51,13 @@ export const testOption: readonly Option[] = [
 
 const eventStore = function createEventStore() {
   return makeAutoObservable({
-    fulfilmentStep: Fulfillment.picking as Fulfillment,
+    fulfilmentStep: undefined,
 
     /* TODO : the events has to be object like filterValues? */
     pickingEvents: [] as Array<Event>,
     packingEvents: [] as Array<Event>,
     deliveryEvents: [] as Array<Event>,
+
     optionInfo: {
       picking: {} as OptionInfo,
       packing: {} as OptionInfo,
@@ -91,6 +92,8 @@ const eventStore = function createEventStore() {
       const { authStore } = useStores();
       const step = this.fulfilmentStep;
 
+      if (!step) return;
+
       try {
         const getIdToken = await authStore.getIdToken();
 
@@ -100,7 +103,9 @@ const eventStore = function createEventStore() {
         });
 
         runInAction(() => {
-          this.pickingEvents = data;
+          if (step === Fulfillment.picking) this.pickingEvents = data;
+          else if (step === Fulfillment.packing) this.packingEvents = data;
+          else if (step === Fulfillment.delivery) this.deliveryEvents = data;
         });
       } catch (error) {
         throw error;
