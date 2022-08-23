@@ -19,13 +19,15 @@ python3 manage.py runserver
 
 ### Docker build and push
 
+** master branch로 merge & push로 배포 **
+
 AWS CLI profile 이름이 `gravimetric` 인 경우
 
 #### API Server
 
 ```
 aws ecr get-login-password --region ap-northeast-2 --profile gravimetric | docker login --username AWS --password-stdin 025646348585.dkr.ecr.ap-northeast-2.amazonaws.com
-docker build --platform linux/arm64/v8 -t gravimetric-server .
+docker build --platform linux/amd64 -t gravimetric-server .
 docker tag gravimetric-server:latest 025646348585.dkr.ecr.ap-northeast-2.amazonaws.com/gravimetric-server:latest
 docker push 025646348585.dkr.ecr.ap-northeast-2.amazonaws.com/gravimetric-server:latest
 ```
@@ -34,7 +36,7 @@ docker push 025646348585.dkr.ecr.ap-northeast-2.amazonaws.com/gravimetric-server
 
 ```
 aws ecr get-login-password --region ap-northeast-2 --profile gravimetric | docker login --username AWS --password-stdin 025646348585.dkr.ecr.ap-northeast-2.amazonaws.com
-docker build --platform linux/arm64/v8 -t gravimetric-client .
+docker build --platform linux/amd64 -t gravimetric-client .
 docker tag gravimetric-client:latest 025646348585.dkr.ecr.ap-northeast-2.amazonaws.com/gravimetric-client:latest
 docker push 025646348585.dkr.ecr.ap-northeast-2.amazonaws.com/gravimetric-client:latest
 ```
