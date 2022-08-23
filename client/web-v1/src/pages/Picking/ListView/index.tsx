@@ -1,11 +1,13 @@
 import React from 'react';
+import { observer } from 'mobx-react-lite';
 import { Fulfillment } from '../../../components/ContentElements/Header/type';
 import { EventColumn } from '../type';
 import useStores from '../../../hooks/useStores';
-import SelectOption from '../../../components/ReusableElements/Select';
+import SelectFilter from '../../../components/ReusableElements/Select';
 import styles from './index.module.scss';
+import { optionssss } from '../../../stores/event';
 
-const tableColumn: { [key: string]: EventColumn[] } = {
+const tableColumnByStep: { [key: string]: EventColumn[] } = {
   [Fulfillment.Picking]: [
     EventColumn.BasketID,
     EventColumn.WorkerID,
@@ -19,22 +21,8 @@ const tableColumn: { [key: string]: EventColumn[] } = {
   [Fulfillment.Delivery]: [],
 };
 
-/* TODO : get events from event store observerble */
-const pickingEvents = [
-  { worker_id: 0, busket_id: 1, product_id: 9, weight: 0.41740172538650305, operation: 'PUT', label: 'False' },
-  { worker_id: 1, busket_id: 0, product_id: 2, weight: 0.4940190375572947, operation: 'PUT', label: 'False' },
-  { worker_id: 2, busket_id: 1, product_id: 9, weight: 0.4969732191272813, operation: 'PUT', label: 'False' },
-];
-
 const ListView: React.FunctionComponent = () => {
   const { eventStore } = useStores();
-
-  /* TODO : Replace temp options data with the real one */
-  const options = [
-    { value: 'chocolate', label: 'Chocolate' },
-    { value: 'strawberry', label: 'Strawberry' },
-    { value: 'vanilla', label: 'Vanilla' },
-  ];
 
   return (
     <div className={styles.listView}>
@@ -42,20 +30,20 @@ const ListView: React.FunctionComponent = () => {
         <table>
           <thead>
             <tr>
-              {tableColumn[eventStore.filterValues].map((col) => {
+              {tableColumnByStep[eventStore.fulfilmentStep].map((col, index) => {
                 return (
-                  <th key={col}>
-                    <SelectOption col={col} options={options} />
+                  <th key={index}>
+                    <SelectFilter col={col} options={optionssss} />
                   </th>
                 );
               })}
             </tr>
           </thead>
           <tbody className={styles.tableBody}>
-            {pickingEvents.map((event, index) => {
+            {eventStore.filterEvents.map((event, index) => {
               return (
                 <tr key={index}>
-                  {Object.values(event).map((value, index) => {
+                  {Object.values(event).map((value: any, index) => {
                     return <td key={index}>{value}</td>;
                   })}
                 </tr>
@@ -68,4 +56,4 @@ const ListView: React.FunctionComponent = () => {
   );
 };
 
-export default ListView;
+export default observer(ListView);
