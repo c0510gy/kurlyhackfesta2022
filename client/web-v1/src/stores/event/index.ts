@@ -2,41 +2,43 @@ import { makeAutoObservable } from 'mobx';
 import axios from 'axios';
 import configs from '../../configs';
 import useStores from '../../hooks/useStores';
-import { Fulfillment } from '../../components/ContentElements/Header/type';
 import { Option } from '../../components/ReusableElements/Select';
 import { EventColumn, Event } from '../../pages/Picking/type';
-import { FilterValue } from './type';
+import { FilterValue, Fulfillment } from './type';
 
 const option: Option = { label: '', value: '' };
 
 export const initFilterValues: { [key: string]: { [key: string]: Option } } = {
   [Fulfillment.Picking]: {
-    [EventColumn.BasketID]: undefined,
-    [EventColumn.WorkerID]: undefined,
-    [EventColumn.ProductID]: undefined,
-    [EventColumn.Weight]: undefined,
-    [EventColumn.Operation]: undefined,
-    [EventColumn.Label]: undefined,
-    [EventColumn.CreatedAt]: undefined,
+    [EventColumn.id]: undefined,
+    [EventColumn.worker_id]: undefined,
+    [EventColumn.product_id]: undefined,
+    [EventColumn.weight]: undefined,
+    [EventColumn.operation]: undefined,
+    [EventColumn.pred]: undefined,
+    // [EventColumn.Label]: undefined,
+    [EventColumn.created_at]: undefined,
   },
   [Fulfillment.Packing]: {
-    [EventColumn.PackageID]: undefined,
-    [EventColumn.FillingID]: undefined,
-    [EventColumn.WorkerID]: undefined,
-    [EventColumn.ProductID]: undefined,
-    [EventColumn.Weight]: undefined,
-    [EventColumn.Operation]: undefined,
-    [EventColumn.Label]: undefined,
-    [EventColumn.CreatedAt]: undefined,
+    [EventColumn.package_id]: undefined,
+    [EventColumn.filling_id]: undefined,
+    [EventColumn.worker_id]: undefined,
+    [EventColumn.product_id]: undefined,
+    [EventColumn.weight]: undefined,
+    [EventColumn.operation]: undefined,
+    [EventColumn.pred]: undefined,
+    // [EventColumn.Label]: undefined,
+    [EventColumn.created_at]: undefined,
   },
   [Fulfillment.Delivery]: {
-    [EventColumn.PackageID]: undefined,
-    [EventColumn.WorkerID]: undefined,
-    [EventColumn.ProductID]: undefined,
-    [EventColumn.Weight]: undefined,
-    [EventColumn.Operation]: undefined,
-    [EventColumn.Label]: undefined,
-    [EventColumn.CreatedAt]: undefined,
+    [EventColumn.package_id]: undefined,
+    [EventColumn.worker_id]: undefined,
+    [EventColumn.product_id]: undefined,
+    [EventColumn.weight]: undefined,
+    [EventColumn.operation]: undefined,
+    [EventColumn.pred]: undefined,
+    // [EventColumn.Label]: undefined,
+    [EventColumn.created_at]: undefined,
   },
 };
 
@@ -52,9 +54,9 @@ const eventStore = function createEventStore() {
     fulfilmentStep: Fulfillment.Picking,
 
     /* TODO : the events has to be object like filterValues? */
-    pickingEvents: [] as Event[],
-    packingEvents: [] as Event[],
-    deliveryEvents: [] as Event[],
+    pickingEvents: [] as Array<Event>,
+    packingEvents: [] as Array<Event>,
+    deliveryEvents: [] as Array<Event>,
 
     filterValues: {
       picking: initFilterValues[Fulfillment.Picking],
@@ -62,28 +64,30 @@ const eventStore = function createEventStore() {
       delivery: initFilterValues[Fulfillment.Delivery],
     } as { [key: string]: FilterValue },
 
-    async loadEvents(): Promise<void> {
+    async loadEvents(step: Fulfillment): Promise<void> {
       const { authStore } = useStores();
 
       const getIdToken = await authStore.getIdToken();
-      const { data } = await axios.get(`${configs.backendEndPoint}/api/events/picking`, {
+
+      const { data } = await axios.get(`${configs.backendEndPoint}/api/events/${step.toLowerCase()}`, {
         params: { limits: 100 },
         headers: { Authorization: `Bearer ${getIdToken}` },
       });
 
-      this.pickingEvents = data.map((event: Event) => {
-        return {
-          [EventColumn.ID]: event.id,
-          [EventColumn.BasketID]: event.busket_id,
-          [EventColumn.WorkerID]: event.worker_id,
-          [EventColumn.ProductID]: event.product_id,
-          [EventColumn.Weight]: event.weight,
-          [EventColumn.Operation]: event.operation,
-          [EventColumn.Label]: event.label,
-          [EventColumn.PRED]: event.pred,
-          [EventColumn.CreatedAt]: event.created_at,
-        };
-      });
+      this.pickingEvents = data;
+      // .map((event: Event) => {
+      //   return {
+      //     [EventColumn.ID]: event.id,
+      //     [EventColumn.BasketID]: event.busket_id,
+      //     [EventColumn.WorkerID]: event.worker_id,
+      //     [EventColumn.ProductID]: event.product_id,
+      //     [EventColumn.Weight]: event.weight,
+      //     [EventColumn.Operation]: event.operation,
+      //     [EventColumn.Label]: event.label,
+      //     [EventColumn.Pred]: event.pred,
+      //     [EventColumn.CreatedAt]: event.created_at,
+      //   };
+      // });
 
       // const packingEvents = '';
       // const deliveryEvents = '';
@@ -93,24 +97,18 @@ const eventStore = function createEventStore() {
       const events = this.pickingEvents;
       const step = this.fulfilmentStep.toLowerCase();
 
-      console.log('events', events);
-
       if (events.length === 0) return [];
       const filterValues = this.filterValues[step];
 
-      let filteredEvents: Array<any> = [...events];
+      let filteredEvents: Array<Event> = [...events];
 
-      Object.entries(filterValues).forEach(([col, option]: [any, Option]) => {
-        if (!option) return true; // if value is undefined
+      console.log(filterValues);
 
-        const aa = [{ [col]: option.value }]; // [ { '상품': 1 } ]
-
-        filteredEvents = filteredEvents.filter((event) =>
-          Object.entries(event).forEach((data) => {
-            console.log('data', data);
-          }),
-        );
-      });
+      filteredEvents.filter((event: any) =>
+        Object.entries(filterValues)
+          .filter(([, option]: [string, string]) => !!option)
+          .reduce((prev, [col, option]) => prev && event[col] == option, true),
+      );
 
       return filteredEvents;
     },

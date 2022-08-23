@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { EventView } from '../type';
-import { Fulfillment } from '../../../components/ContentElements/Header/type';
+import { Fulfillment } from '../../../stores/event/type';
 import Button from '../../../components/ReusableElements/Button';
 import ListView from './ListView';
 import BasketView from './BasketView';

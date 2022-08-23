@@ -10,11 +10,12 @@ export interface Option {
 }
 
 export interface SelectOptionProps {
+  placeholder?: string;
   col: EventColumn;
   options: readonly Option[];
 }
 
-const SelectOption: React.FunctionComponent<SelectOptionProps> = ({ col, options }: SelectOptionProps) => {
+const SelectOption: React.FunctionComponent<SelectOptionProps> = ({ placeholder, col, options }: SelectOptionProps) => {
   const { eventStore } = useStores();
 
   const filterChangeHandler = (col: EventColumn, option: Option): void => {
@@ -23,7 +24,7 @@ const SelectOption: React.FunctionComponent<SelectOptionProps> = ({ col, options
 
   return (
     <Select
-      placeholder={col}
+      placeholder={placeholder}
       options={options}
       onChange={(newValue: Option) => filterChangeHandler(col, newValue)}
       isClearable

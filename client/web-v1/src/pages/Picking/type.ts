@@ -19,16 +19,30 @@ export enum EventView {
 }
 
 export enum EventColumn {
-  ID = 'ID',
-  BasketID = '바구니 번호',
-  FillingID = '포장제 종류?',
-  PackageID = '포장 상자 종류',
-  RegionID = '지역',
-  WorkerID = '담당자',
-  ProductID = '상품',
-  Weight = '중량',
-  Operation = '상태', // PUT or END
-  Label = 'Label',
-  PRED = '예측',
-  CreatedAt = '이벤트 발생 시간',
+  id = 'id',
+  busket_id = 'busket_id',
+  filling_id = 'filling_id',
+  package_id = 'package_id',
+  region_id = 'region_id',
+  worker_id = 'worker_id',
+  product_id = 'product_id',
+  weight = 'weight',
+  operation = 'operation', // PUT or END
+  label = 'label',
+  pred = 'pred',
+  created_at = 'created_at',
 }
+
+export const mappingPlaceholder: { [key: string]: string } = {
+  [EventColumn.id]: 'ID',
+  [EventColumn.busket_id]: '바구니 번호',
+  [EventColumn.filling_id]: '포장제',
+  [EventColumn.package_id]: '포장 상자',
+  [EventColumn.region_id]: '지역',
+  [EventColumn.worker_id]: '담당자',
+  [EventColumn.product_id]: '상품',
+  [EventColumn.weight]: '중량',
+  [EventColumn.operation]: '상태',
+  [EventColumn.pred]: '예측',
+  [EventColumn.created_at]: '이벤트 발생 시간',
+};
