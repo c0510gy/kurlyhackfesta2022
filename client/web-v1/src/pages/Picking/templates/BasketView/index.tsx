@@ -1,119 +1,38 @@
 import React, { useEffect, useState } from 'react';
+import useStores from '../../../../hooks/useStores';
 import styles from './index.module.scss';
-
-/* TODO : get events from event store observerble */
-const pickingEvents = new Array(1000);
-
-for (let i = 0; i < 1000; ++i) {
-  pickingEvents[i] = {};
-}
-
-pickingEvents[1] = {
-  worker_id: 0,
-  basket_id: 1,
-  product_id: 9,
-  weight: 0.41740172538650305,
-  operation: 'PUT',
-  label: 'False',
-  predict: 'True',
-};
-pickingEvents[0] = {
-  worker_id: 1,
-  basket_id: 0,
-  product_id: 2,
-  weight: 0.4940190375572947,
-  operation: 'PUT',
-  label: 'False',
-  predict: 'True',
-};
-pickingEvents[1] = {
-  worker_id: 2,
-  basket_id: 1,
-  product_id: 9,
-  weight: 0.4969732191272813,
-  operation: 'PUT',
-  label: 'False',
-  predict: 'True',
-};
-pickingEvents[2] = {
-  worker_id: 2,
-  basket_id: 1,
-  product_id: 9,
-  weight: 0.4969732191272813,
-  operation: 'PUT',
-  label: 'False',
-  predict: 'True',
-};
-pickingEvents[3] = {
-  worker_id: 2,
-  basket_id: 1,
-  product_id: 9,
-  weight: 0.4969732191272813,
-  operation: 'PUT',
-  label: 'False',
-  predict: 'True',
-};
-pickingEvents[4] = {
-  worker_id: 2,
-  basket_id: 1,
-  product_id: 9,
-  weight: 0.4969732191272813,
-  operation: 'PUT',
-  label: 'False',
-  predict: 'True',
-};
-pickingEvents[5] = {
-  worker_id: 2,
-  basket_id: 1,
-  product_id: 9,
-  weight: 0.4969732191272813,
-  operation: 'PUT',
-  label: 'False',
-  predict: 'True',
-};
-pickingEvents[6] = {
-  worker_id: 2,
-  basket_id: 1,
-  product_id: 9,
-  weight: 0.4969732191272813,
-  operation: 'PUT',
-  label: 'False',
-  predict: 'True',
-};
-pickingEvents[102] = {
-  worker_id: 2,
-  basket_id: 1,
-  product_id: 9,
-  weight: 0.4969732191272813,
-  operation: 'PUT',
-  label: 'False',
-  predict: 'True',
-};
 
 const getRandomInt = (maxNum: number, minNum: number) => {
   return Math.floor(Math.random() * (maxNum - minNum)) + minNum;
 };
 
 const BasketView = () => {
-  const [pickingList, setPickingList] = useState([]);
+  const [pickingListErrorSum, setPickingListErrorSum] = useState([]);
+  const { eventStore } = useStores();
   useEffect(() => {
-    const tempArr = [];
+    const tempArr:any[] = [];
     for (let row = 0; row < 10; ++row) {
       tempArr.push(new Array(20).fill(0));
     }
-    setPickingList(tempArr);
+
+    eventStore.pickingEvents.map((pe) => {
+      const basketId = pe.busket_id % 1000;
+      const [row, col] = [Math.floor(basketId / 100), Math.floor(basketId % 100 / 5)];
+      tempArr[row][col] += 1;
+    });
+    setPickingListErrorSum(tempArr);
   }, []);
 
   const changeHandler = (rowIdx: number, colIdx: number, value: number) => {
-    const copy = [...pickingList];
+    const copy = [...pickingListErrorSum];
     copy[rowIdx][colIdx] = value;
-    setPickingList(copy);
+    setPickingListErrorSum(copy);
   };
 
   const clickHander = (rowIdx: number, colIdx: number) => {
     console.log('These baskets are in error');
     for (let i = 0; i < 5; ++i) {
-      if (pickingEvents[rowIdx * 100 + colIdx * 5 + i].predict !== 'True') continue;
+      if (!eventStore.pickingEvents[rowIdx * 100 + colIdx * 5 + i].pred) continue;
       console.log('Basket id: ', rowIdx * 100 + colIdx * 5 + i);
     }
   };
@@ -125,7 +44,7 @@ const BasketView = () => {
     }
     let errorBasketSum = 0;
     for (let i = 0; i < 5; ++i) {
-      if (pickingEvents[basketIndex[i]]?.predict === 'True') {
+      if (eventStore.pickingEvents[basketIndex[i]]?.pred) {
         ++errorBasketSum;
       }
     }
@@ -133,7 +52,6 @@ const BasketView = () => {
     if (errorBasketSum !== errorBasketSumOrigin) {
       changeHandler(rowIdx, colIdx, errorBasketSum);
     }
-
     return errorBasketSum;
   };
 
@@ -142,16 +60,16 @@ const BasketView = () => {
     const basketIndex = getRandomInt(1000, 0);
     const workerId = getRandomInt(5, 0);
     const productId = getRandomInt(10, 0);
-    const predict = getRandomInt(2, 0) === 1 ? 'True' : 'False';
-    if (pickingEvents[basketIndex]?.predict === 'True') return;
-    pickingEvents[basketIndex] = {
+    const pred = getRandomInt(2, 0) === 1;
+    if (eventStore.pickingEvents[basketIndex]?.pred) return;
+    pickingListErrorSum[basketIndex] = {
       worker_id: workerId,
-      basket_id: basketIndex,
+      busket_id: basketIndex,
       product_id: productId,
-      predict: predict,
+      pred: pred,
     };
     const [row, col] = [Math.floor(basketIndex / 100), Math.floor(Math.floor(basketIndex % 100) / 5)];
-    countErrorBaskets(pickingList[row][col], row, col);
+    countErrorBaskets(pickingListErrorSum[row][col], row, col);
   };
 
   return (
@@ -159,7 +77,7 @@ const BasketView = () => {
       <button onClick={changePickingEventHandler}>random create</button>
       <table>
         <tbody className={styles.tableBody}>
-          {pickingList.map((row: any, rowIdx: number) => {
+          {pickingListErrorSum.map((row: any, rowIdx: number) => {
             return (
               <tr key={rowIdx}>
                 {row.map((value: number, colIdx: number) => {
@@ -175,7 +93,7 @@ const BasketView = () => {
                           : { backgroundColor: 'green', cursor: 'default' }
                       }
                     >
-                      {pickingList[rowIdx][colIdx]}
+                      {pickingListErrorSum[rowIdx][colIdx]}
                     </td>
                   );
                 })}
