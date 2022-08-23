@@ -10,9 +10,10 @@ import Delivery from './pages/Delivery';
 
 import { Amplify } from 'aws-amplify';
 import { AmplifyAuthenticator, AmplifySignIn } from '@aws-amplify/ui-react';
-import awsconfig from './awsconfig.js';
+import configs from './configs';
 
-Amplify.configure(awsconfig);
+
+Amplify.configure(configs.awsConfig);
 
 const App = (): JSX.Element => {
   return (
