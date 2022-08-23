@@ -30,7 +30,7 @@ const ListView: React.FunctionComponent = () => {
 
   return (
     <div className={styles.listView}>
-      {/* <div className={styles.tableWrapper}>
+      <div className={styles.tableWrapper}>
         <table>
           <thead>
             <tr>
@@ -57,7 +57,7 @@ const ListView: React.FunctionComponent = () => {
             })}
           </tbody>
         </table>
-      </div> */}
+      </div>
     </div>
   );
 };
