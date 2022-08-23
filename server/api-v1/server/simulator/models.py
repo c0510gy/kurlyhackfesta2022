@@ -40,6 +40,7 @@ class DeliverySimulationInfo(models.Model):
     num_packages = models.IntegerField(null=False)
     num_regions = models.IntegerField(null=False)
     num_products = models.IntegerField(null=False)
+    pallet_error_margin = models.FloatField(null=False)
     human_error = models.FloatField(null=False)
     window_size = models.IntegerField(null=False)
 
@@ -99,7 +100,7 @@ class DeliveryDetectionEvent(models.Model):
     worker_id = models.IntegerField(null=False)
     package_id = models.IntegerField(null=False)
     region_id = models.IntegerField(null=False)
-    weight = models.FloatField(null=False)
+    error_rate = models.FloatField(null=False)
     operation = models.CharField(null=False, max_length=40)
     pred = models.BooleanField(null=True)
     label = models.BooleanField(null=False)

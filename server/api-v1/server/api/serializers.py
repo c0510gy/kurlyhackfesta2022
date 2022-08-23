@@ -31,7 +31,7 @@ class DeliverySimulationInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = DeliverySimulationInfo
         fields = ('id', 'num_workers', 'num_packages',
-                  'num_regions', 'num_products', 'human_error', 'window_size', )
+                  'num_regions', 'num_products', 'pallet_error_margin', 'human_error', 'window_size', )
         read_only_fields = ('created_at',)
 
 
@@ -55,5 +55,5 @@ class DeliveryDetectionEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = DeliveryDetectionEvent
         fields = ('id', 'worker_id', 'package_id',
-                  'region_id', 'weight', 'operation', 'pred', 'label', 'created_at',)
+                  'region_id', 'error_rate', 'operation', 'pred', 'label', 'created_at',)
         read_only_fields = ('updated_at',)
