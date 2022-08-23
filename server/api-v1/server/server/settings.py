@@ -75,6 +75,8 @@ SWAGGER_SETTINGS = {
     },
 }
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # Django Background Tasks
 BACKGROUND_TASK_RUN_ASYNC = False
 
