@@ -69,12 +69,26 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Generate Config Files
-        id: gen-config-files
-        run: |
-          echo "$SERVER_CONFIG" >> ./server/api-v1/server/config.json
-          echo "$CLIENT_DEV_CONFIG" >> ./client/web-v1/src/configs/development.tsx
-          echo "$CLIENT_PROD_CONFIG" >> ./client/web-v1/src/configs/production.tsx
+      - name: Generate Server Config Files
+        id: gen-server-config-files
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: './server/api-v1/server/config.json'
+          json: ${{ secrets.SERVER_CONFIG }}
+
+      - name: Generate Client dev Config Files
+        id: gen-client-dev-config-files
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: './client/web-v1/src/configs/development.tsx'
+          json: ${{ secrets.CLIENT_DEV_CONFIG }}
+
+      - name: Generate Client prod Config Files
+        id: gen-client-prod-config-files
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: './client/web-v1/src/configs/production.tsx'
+          json: ${{ secrets.CLIENT_PROD_CONFIG }}
 
       - name: Build, tag, and push client image to Amazon ECR
         id: build-client-image
