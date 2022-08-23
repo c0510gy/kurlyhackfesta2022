@@ -27,7 +27,7 @@ export enum EventColumn {
   worker_id = 'worker_id',
   product_id = 'product_id',
   weight = 'weight',
-  operation = 'operation', // PUT or END
+  operation = 'operation',
   label = 'label',
   pred = 'pred',
   created_at = 'created_at',

@@ -1,70 +1,59 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import axios from 'axios';
 import configs from '../../configs';
+import moment from 'moment';
 import useStores from '../../hooks/useStores';
 import { Option } from '../../components/ReusableElements/Select';
 import { EventColumn, Event } from '../../pages/Picking/type';
-import { FilterValue, Fulfillment, OptionInfo } from './type';
+import { FilterValue, Fulfillment } from './type';
 
-const option: Option = { label: '', value: '' };
-
-export const initFilterValues: { [key: string]: { [key: string]: Option } } = {
+export const initFilterValues: { [key: string]: { [key: string]: Option | Option[] } } = {
   [Fulfillment.picking]: {
     [EventColumn.id]: undefined,
     [EventColumn.worker_id]: undefined,
+    [EventColumn.busket_id]: undefined,
     [EventColumn.product_id]: undefined,
     [EventColumn.weight]: undefined,
     [EventColumn.operation]: undefined,
     [EventColumn.pred]: undefined,
-    // [EventColumn.Label]: undefined,
     [EventColumn.created_at]: undefined,
   },
   [Fulfillment.packing]: {
     [EventColumn.id]: undefined,
     [EventColumn.worker_id]: undefined,
-    [EventColumn.product_id]: undefined,
     [EventColumn.package_id]: undefined,
     [EventColumn.filling_id]: undefined,
     [EventColumn.weight]: undefined,
     [EventColumn.operation]: undefined,
     [EventColumn.pred]: undefined,
-    // [EventColumn.Label]: undefined,
     [EventColumn.created_at]: undefined,
   },
   [Fulfillment.delivery]: {
     [EventColumn.id]: undefined,
     [EventColumn.worker_id]: undefined,
-    [EventColumn.product_id]: undefined,
     [EventColumn.package_id]: undefined,
     [EventColumn.region_id]: undefined,
     [EventColumn.weight]: undefined,
     [EventColumn.operation]: undefined,
     [EventColumn.pred]: undefined,
-    // [EventColumn.Label]: undefined,
     [EventColumn.created_at]: undefined,
   },
 };
-
-/* TODO : Replace temp options data with the real one */
-export const testOption: readonly Option[] = [
-  { label: '0', value: 0 },
-  { label: '1', value: 1 },
-  { label: '2', value: 2 },
-];
 
 const eventStore = function createEventStore() {
   return makeAutoObservable({
     fulfilmentStep: undefined,
 
-    /* TODO : the events has to be object like filterValues? */
-    pickingEvents: [] as Array<Event>,
-    packingEvents: [] as Array<Event>,
-    deliveryEvents: [] as Array<Event>,
+    events: {
+      picking: [] as Event[],
+      packing: [] as Event[],
+      delivery: [] as Event[],
+    },
 
-    optionInfo: {
-      picking: {} as OptionInfo,
-      packing: {} as OptionInfo,
-      delivery: {} as OptionInfo,
+    options: {
+      picking: initFilterValues[Fulfillment.picking],
+      packing: initFilterValues[Fulfillment.packing],
+      delivery: initFilterValues[Fulfillment.delivery],
     },
 
     filterValues: {
@@ -73,19 +62,23 @@ const eventStore = function createEventStore() {
       delivery: initFilterValues[Fulfillment.delivery],
     } as { [key: string]: FilterValue },
 
-    get filterEvents(): Array<Event> {
-      const events = this.pickingEvents;
+    get filterEvents(): Event[] {
+      let events: Event[] = [];
       const step = this.fulfilmentStep;
+
+      events = this.events[step];
 
       if (events.length === 0) return [];
       const filterValues = this.filterValues[step];
 
       let filteredEvents: Array<Event> = [...events];
 
-      filteredEvents.filter((event: any) =>
+      filteredEvents = filteredEvents.filter((event: Event) =>
         Object.entries(filterValues)
           .filter(([, option]) => !!option)
-          .reduce((prev, [col, option]) => prev && event[col] == option, true),
+          .reduce((prev, [col, option]: [EventColumn, Option]) => {
+            return prev && event[col] == option.value;
+          }, true),
       );
 
       return filteredEvents;
@@ -100,47 +93,103 @@ const eventStore = function createEventStore() {
       try {
         const getIdToken = await authStore.getIdToken();
 
-        const tempArr:any[] = new Array(1000);
+        const { data: optionsInfo } = await axios.get(`${configs.backendEndPoint}/api/info/${step}`, {
+          params: {},
+          headers: { Authorization: `Bearer ${getIdToken}` },
+        });
 
         const { data: events } = await axios.get(`${configs.backendEndPoint}/api/events/${step}`, {
-          // params: { limits: 100 },
+          params: { limits: 1000 },
           headers: { Authorization: `Bearer ${getIdToken}` },
-        })
+        });
+
+        /*  TODO : make it as a function
+            set options
+        */
+
+        const id: Option[] = [];
+        const createdAt: Option[] = [];
+        const weight: Option[] = [];
+
+        events.forEach((event: Event) => {
+          id.push({ label: event.id, value: event.id });
+          weight.push({ label: `${event.weight}`, value: event.weight });
+          createdAt.push({
+            label: moment(event.created_at).locale('ko').format('YYYY-MM-DD HH:mm:ss'),
+            value: event.created_at,
+          });
+        });
 
         runInAction(() => {
+          this.events[step] = events;
+
+          // Common data
+          this.options[step] = {
+            ...this.options[step],
+            [EventColumn.id]: id,
+            [EventColumn.weight]: weight,
+            [EventColumn.pred]: [
+              { label: 'True', value: true },
+              { label: 'False', value: false },
+            ],
+            [EventColumn.operation]: [
+              { label: 'PUT', value: 'PUT' },
+              { label: 'END', value: 'END' },
+            ],
+            [EventColumn.created_at]: createdAt,
+          };
+
           if (step === Fulfillment.picking) {
-            events.map((response: { busket_id: number; }) => {
-              const busketId = response?.busket_id || -1;
-              if (busketId < 0)
-                return;
-              if (tempArr[busketId]?.pred)
-                return;
-              tempArr[busketId] = response;
-            })
-            this.pickingEvents = tempArr;
+            this.options[Fulfillment.picking] = {
+              ...this.options[Fulfillment.picking],
+              [EventColumn.worker_id]: new Array(optionsInfo[0].num_workers)
+                .fill(0)
+                .map((key, index) => ({ label: `${index}`, value: index })),
+              [EventColumn.busket_id]: new Array(optionsInfo[0].num_buskets).fill(0).map((key, index) => ({
+                label: `${index}`,
+                value: index,
+              })),
+              [EventColumn.product_id]: new Array(optionsInfo[0].num_products).fill(0).map((key, index) => ({
+                label: `${index}`,
+                value: index,
+              })),
+            };
+          } else if (step === Fulfillment.packing) {
+            this.options[Fulfillment.packing] = {
+              ...this.options[Fulfillment.packing],
+              [EventColumn.worker_id]: new Array(optionsInfo[0].num_workers)
+                .fill(0)
+                .map((key, index) => ({ label: `${index}`, value: index })),
+              [EventColumn.package_id]: new Array(optionsInfo[0].num_packages).fill(0).map((key, index) => ({
+                label: `${index}`,
+                value: index,
+              })),
+              [EventColumn.filling_id]: new Array(optionsInfo[0].num_fillings).fill(0).map((key, index) => ({
+                label: `${index}`,
+                value: index,
+              })),
+            };
+          } else if (step === Fulfillment.delivery) {
+            this.options[Fulfillment.delivery] = {
+              ...this.options[Fulfillment.delivery],
+              [EventColumn.worker_id]: new Array(optionsInfo[0].num_workers)
+                .fill(0)
+                .map((key, index) => ({ label: `${index}`, value: index })),
+              [EventColumn.package_id]: new Array(optionsInfo[0].num_packages).fill(0).map((key, index) => ({
+                label: `${index}`,
+                value: index,
+              })),
+              [EventColumn.region_id]: new Array(optionsInfo[0].num_regions).fill(0).map((key, index) => ({
+                label: `${index}`,
+                value: index,
+              })),
+            };
           }
-          else if (step === Fulfillment.packing) this.packingEvents = events;
-          else if (step === Fulfillment.delivery) this.deliveryEvents = events;
+          /* set options */
         });
       } catch (error) {
         throw error;
       }
-      // .map((event: Event) => {
-      //   return {
-      //     [EventColumn.ID]: event.id,
-      //     [EventColumn.BasketID]: event.busket_id,
-      //     [EventColumn.WorkerID]: event.worker_id,
-      //     [EventColumn.ProductID]: event.product_id,
-      //     [EventColumn.Weight]: event.weight,
-      //     [EventColumn.Operation]: event.operation,
-      //     [EventColumn.Label]: event.label,
-      //     [EventColumn.Pred]: event.pred,
-      //     [EventColumn.CreatedAt]: event.created_at,
-      //   };
-      // });
-
-      // const packingEvents = '';
-      // const deliveryEvents = '';
     },
 
     updateFilterValueByKey(data: FilterValue): void {

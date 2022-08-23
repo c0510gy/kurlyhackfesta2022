@@ -12,7 +12,7 @@ export interface Option {
 export interface SelectOptionProps {
   placeholder?: string;
   col: EventColumn;
-  options: readonly Option[];
+  options: Option[];
 }
 
 const SelectOption: React.FunctionComponent<SelectOptionProps> = ({ placeholder, col, options }: SelectOptionProps) => {
