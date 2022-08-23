@@ -1,13 +1,15 @@
+import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { Fulfillment } from '../../stores/event/type';
-import styles from './index.module.scss';
+import DeliveryTemplate from './templates';
+import useStores from '../../hooks/useStores';
 
-const Delivery: React.FunctionComponent = () => {
-  return (
-    <div className={styles.container}>
-      <h2>{Fulfillment.Delivery}</h2>
-    </div>
-  );
+const Delivery: React.FunctionComponent = (): JSX.Element => {
+  const { eventStore } = useStores();
+
+  // Load events logs
+  eventStore.loadEvents();
+
+  return <DeliveryTemplate />;
 };
 
-export default Delivery;
+export default observer(Delivery);

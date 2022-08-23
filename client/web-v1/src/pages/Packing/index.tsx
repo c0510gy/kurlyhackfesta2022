@@ -1,13 +1,15 @@
+import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { Fulfillment } from '../../stores/event/type';
-import styles from './index.module.scss';
+import PackingTemplate from './templates';
+import useStores from '../../hooks/useStores';
 
-const Packing: React.FunctionComponent = () => {
-  return (
-    <div className={styles.container}>
-      <h2>{Fulfillment.Packing}</h2>
-    </div>
-  );
+const Packing: React.FunctionComponent = (): JSX.Element => {
+  const { eventStore } = useStores();
+
+  // Load events logs
+  eventStore.loadEvents();
+
+  return <PackingTemplate />;
 };
 
-export default Packing;
+export default observer(Packing);

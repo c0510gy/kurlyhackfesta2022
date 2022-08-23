@@ -2,9 +2,9 @@ import { Option } from '../../components/ReusableElements/Select';
 import { EventColumn } from '../../pages/Picking/type';
 
 export enum Fulfillment {
-  Picking = 'Picking',
-  Packing = 'Packing',
-  Delivery = 'Delivery',
+  picking = 'picking',
+  packing = 'packing',
+  delivery = 'delivery',
 }
 
 export interface FilterValue {
@@ -18,4 +18,14 @@ export interface FilterValue {
   [EventColumn.operation]?: Option;
   [EventColumn.label]?: Option;
   [EventColumn.created_at]?: Option;
+}
+
+export interface OptionInfo {
+  id?: string;
+  num_workers?: number;
+  num_packages?: number;
+  num_regions?: number;
+  num_products?: number;
+  human_error?: number;
+  window_size?: number;
 }
