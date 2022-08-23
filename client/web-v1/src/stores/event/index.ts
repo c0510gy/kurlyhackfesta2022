@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import axios from 'axios';
 import configs from '../../configs';
+import moment from 'moment';
 import useStores from '../../hooks/useStores';
 import { Option } from '../../components/ReusableElements/Select';
 import { EventColumn, Event } from '../../pages/Picking/type';
@@ -76,7 +77,6 @@ const eventStore = function createEventStore() {
         Object.entries(filterValues)
           .filter(([, option]) => !!option)
           .reduce((prev, [col, option]: [EventColumn, Option]) => {
-            console.log(col, event[col], option.value, event[col] == option.value);
             return prev && event[col] == option.value;
           }, true),
       );
@@ -114,7 +114,10 @@ const eventStore = function createEventStore() {
         events.forEach((event: Event) => {
           id.push({ label: event.id, value: event.id });
           weight.push({ label: `${event.weight}`, value: event.weight });
-          createdAt.push({ label: event.created_at, value: event.created_at });
+          createdAt.push({
+            label: moment(event.created_at).locale('ko').format('YYYY-MM-DD HH:mm:ss'),
+            value: event.created_at,
+          });
         });
 
         runInAction(() => {

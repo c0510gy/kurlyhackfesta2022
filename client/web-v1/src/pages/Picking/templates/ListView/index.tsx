@@ -5,6 +5,7 @@ import { EventColumn, mappingPlaceholder } from '../../type';
 import useStores from '../../../../hooks/useStores';
 import SelectFilter, { Option } from '../../../../components/ReusableElements/Select';
 import styles from './index.module.scss';
+import moment from 'moment';
 
 const tableColumnByStep: { [key: string]: EventColumn[] } = {
   [Fulfillment.picking]: [
@@ -67,10 +68,21 @@ const ListView: React.FunctionComponent = () => {
             {eventStore.filterEvents.map((event, index) => {
               return (
                 <tr key={index}>
-                  {Object.entries(event).map(([key, value], index) => {
-                    if (key === 'label') return;
+                  {Object.entries(event).map(([key, value]: [string, string | number | boolean], index) => {
+                    let dataValue = value;
+                    let colorByStatus: React.CSSProperties = null;
+                    if (key === EventColumn.label) return;
+                    if (key === EventColumn.pred) dataValue = value ? 'True' : 'False';
+                    if (key === EventColumn.created_at)
+                      dataValue = moment(value as string)
+                        .locale('ko')
+                        .format('YYYY-MM-DD HH:mm:ss') as string;
 
-                    return <td key={index}>{value}</td>;
+                    return (
+                      <td style={colorByStatus} key={index}>
+                        {dataValue}
+                      </td>
+                    );
                   })}
                 </tr>
               );
