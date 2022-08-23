@@ -3,6 +3,52 @@ from django.utils import timezone
 import uuid
 
 
+class PickingSimulationInfo(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    num_workers = models.IntegerField(null=False)
+    num_buskets = models.IntegerField(null=False)
+    num_products = models.IntegerField(null=False)
+    human_error = models.FloatField(null=False)
+    window_size = models.IntegerField(null=False)
+
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return '[{}] {}'.format(self.id, self.human_error)
+
+
+class PackingSimulationInfo(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    num_workers = models.IntegerField(null=False)
+    num_packages = models.IntegerField(null=False)
+    num_fillings = models.IntegerField(null=False)
+    human_error = models.FloatField(null=False)
+    window_size = models.IntegerField(null=False)
+
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return '[{}] {}'.format(self.id, self.human_error)
+
+
+class DeliverySimulationInfo(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    num_workers = models.IntegerField(null=False)
+    num_packages = models.IntegerField(null=False)
+    num_regions = models.IntegerField(null=False)
+    num_products = models.IntegerField(null=False)
+    human_error = models.FloatField(null=False)
+    window_size = models.IntegerField(null=False)
+
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return '[{}] {}'.format(self.id, self.human_error)
+
+
 class PickingDetectionEvent(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

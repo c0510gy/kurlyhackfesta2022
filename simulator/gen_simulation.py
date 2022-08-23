@@ -209,7 +209,7 @@ def create_delivery(num_orders, num_products, num_regions, num_workers, human_er
 
 if __name__ == '__main__':
 
-    num_orders = 10000
+    num_orders = 1000
     num_products = 10
     num_workers = 2
     num_fillings = 2
@@ -221,6 +221,9 @@ if __name__ == '__main__':
         num_orders, num_products, num_workers)
     picking_df.to_csv('./picking_df.csv')
     product_df.to_csv('./picking_product_df.csv')
+    info_df = pd.DataFrame(data=[[num_workers, num_orders, num_products, human_error_rate]], columns=[
+                           'num_workers', 'num_buskets', 'num_products', 'human_error'])
+    info_df.to_csv('./picking_info_df.csv')
     print(picking_df.head(50))
     print(picking_df[picking_df['operation'] == 'END'].head(50))
     print(product_df.head(10))
@@ -229,14 +232,20 @@ if __name__ == '__main__':
         num_orders, num_fillings, num_workers)
     packing_df.to_csv('./packing_df.csv')
     filling_df.to_csv('./packing_filling_df.csv')
+    info_df = pd.DataFrame(data=[[num_workers, num_orders, num_fillings, human_error_rate]], columns=[
+                           'num_workers', 'num_packages', 'num_fillings', 'human_error'])
+    info_df.to_csv('./packing_info_df.csv')
     print(packing_df.head(50))
     print(packing_df[packing_df['operation'] == 'END'].head(50))
     print(filling_df.head(10))
 
     deliver_df, packages_df = create_delivery(
         num_orders, num_products, num_regions, num_workers)
-    deliver_df.to_csv('./deliver_df.csv')
-    packages_df.to_csv('./deliver_packages_df.csv')
+    deliver_df.to_csv('./delivery_df.csv')
+    packages_df.to_csv('./delivery_packages_df.csv')
+    info_df = pd.DataFrame(data=[[num_workers, num_orders, num_regions, num_products, human_error_rate]], columns=[
+                           'num_workers', 'num_packages', 'num_regions', 'num_products', 'human_error'])
+    info_df.to_csv('./delivery_info_df.csv')
     print(deliver_df.head(50))
     print(deliver_df[deliver_df['operation'] == 'END'].head(50))
     print(packages_df.head(10))

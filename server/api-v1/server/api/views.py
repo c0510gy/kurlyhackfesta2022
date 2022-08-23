@@ -1,6 +1,8 @@
 from .serializers import TestTableSerializer, PickingDetectionEventSerializer, PackingDetectionEventSerializer, DeliveryDetectionEventSerializer
+from .serializers import TestTableSerializer, PickingSimulationInfoSerializer, PackingSimulationInfoSerializer, DeliverySimulationInfoSerializer
 from .models import TestTable
 from simulator.models import PickingDetectionEvent, PackingDetectionEvent, DeliveryDetectionEvent
+from simulator.models import PickingSimulationInfo, PackingSimulationInfo, DeliverySimulationInfo
 from accounts.models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -23,6 +25,115 @@ class TestTableViewAPI(APIView):
         user = User.objects.get(cognito_id=request.user.cognito_id)
         queryset = TestTable.objects.create(user_id=user, test='hello')
         serializer = TestTableSerializer(queryset)
+        return Response(serializer.data)
+
+
+class PickingSimulationInfoViewAPI(APIView):
+    authentication_classes = (JSONWebTokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    response_schema_dict = {
+        "200": openapi.Response(
+            description='Successfully Retrieved Information',
+            examples={
+                "application/json": [
+                    {
+                        "id": "2dd63f8a-c6c2-4c64-9f10-5a183ecd43bb",
+                        "num_workers": 2,
+                        "num_buskets": 1000,
+                        "num_products": 10,
+                        "human_error": 0.02,
+                        "window_size": -1
+                    }
+                ]
+            }
+        ),
+    }
+
+    @swagger_auto_schema(
+        tags=['Retrieve Simulation Information'],
+        operation_description='Retrieve Information of Current Human-error Detection Simulation on Picking',
+        manual_parameters=[],
+        responses=response_schema_dict,
+    )
+    def get(self, request):
+
+        queryset = PickingSimulationInfo.objects.all()
+
+        serializer = PickingSimulationInfoSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class PackingSimulationInfoViewAPI(APIView):
+    authentication_classes = (JSONWebTokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    response_schema_dict = {
+        "200": openapi.Response(
+            description='Successfully Retrieved Information',
+            examples={
+                "application/json": [
+                    {
+                        "id": "b80d829b-70eb-438f-8f96-5ab788b40243",
+                        "num_workers": 2,
+                        "num_packages": 1000,
+                        "num_fillings": 2,
+                        "human_error": 0.02,
+                        "window_size": -1
+                    }
+                ]
+            }
+        ),
+    }
+
+    @swagger_auto_schema(
+        tags=['Retrieve Simulation Information'],
+        operation_description='Retrieve Information of Current Human-error Detection Simulation on Packing',
+        manual_parameters=[],
+        responses=response_schema_dict,
+    )
+    def get(self, request):
+
+        queryset = PackingSimulationInfo.objects.all()
+
+        serializer = PackingSimulationInfoSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class DeliverySimulationInfoViewAPI(APIView):
+    authentication_classes = (JSONWebTokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    response_schema_dict = {
+        "200": openapi.Response(
+            description='Successfully Retrieved Information',
+            examples={
+                "application/json": [
+                    {
+                        "id": "d8b8b9d8-200d-4b34-905e-b0830208a261",
+                        "num_workers": 2,
+                        "num_packages": 1000,
+                        "num_regions": 50,
+                        "num_products": 10,
+                        "human_error": 0.02,
+                        "window_size": -1
+                    }
+                ]
+            }
+        ),
+    }
+
+    @swagger_auto_schema(
+        tags=['Retrieve Simulation Information'],
+        operation_description='Retrieve Information of Current Human-error Detection Simulation on Delivery',
+        manual_parameters=[],
+        responses=response_schema_dict,
+    )
+    def get(self, request):
+
+        queryset = DeliverySimulationInfo.objects.all()
+
+        serializer = DeliverySimulationInfoSerializer(queryset, many=True)
         return Response(serializer.data)
 
 
