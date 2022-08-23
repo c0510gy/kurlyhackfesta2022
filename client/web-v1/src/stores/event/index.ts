@@ -6,6 +6,7 @@ import useStores from '../../hooks/useStores';
 import { Option } from '../../components/ReusableElements/Select';
 import { EventColumn, Event } from '../../pages/Picking/type';
 import { FilterValue, Fulfillment } from './type';
+import { list } from 'postcss';
 
 export const initFilterValues: { [key: string]: { [key: string]: Option | Option[] } } = {
   [Fulfillment.picking]: {
@@ -48,6 +49,7 @@ const eventStore = function createEventStore() {
       picking: [] as Event[],
       packing: [] as Event[],
       delivery: [] as Event[],
+      busket: [] as Event[],
     },
 
     options: {
@@ -99,7 +101,7 @@ const eventStore = function createEventStore() {
         });
 
         const { data: events } = await axios.get(`${configs.backendEndPoint}/api/events/${step}`, {
-          params: { limits: 1000 },
+          // params: { limits: 5000 },
           headers: { Authorization: `Bearer ${getIdToken}` },
         });
 
@@ -122,6 +124,27 @@ const eventStore = function createEventStore() {
 
         runInAction(() => {
           this.events[step] = events;
+          if (step === Fulfillment.picking) {
+            events.sort((a: { busket_id: number; }, b: { busket_id: number; }) => a.busket_id > b.busket_id ? 1 : -1);
+            const tempArr:any[] = new Array(1000);
+
+            for (let i=0; i<events.length-1; ++i) {
+              const currBusketId = events[i].busket_id;
+              if (currBusketId !== events[i+1].busket_id) {
+                if (tempArr[currBusketId]?.pred)
+                  continue;
+                tempArr[currBusketId] = events[i];
+                continue;
+              }
+
+              if (tempArr[currBusketId]?.pred)
+                continue;
+              
+              tempArr[currBusketId] = events[i];
+            }
+            
+            this.events['busket'] = tempArr;
+          }
 
           // Common data
           this.options[step] = {

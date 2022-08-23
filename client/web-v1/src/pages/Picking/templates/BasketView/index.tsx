@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import useStores from '../../../../hooks/useStores';
 import ReactTooltip from 'react-tooltip';
 import styles from './index.module.scss';
-import { Fulfillment } from '../../../../stores/event/type';
 
 const getRandomInt = (maxNum: number, minNum: number) => {
   return Math.floor(Math.random() * (maxNum - minNum)) + minNum;
@@ -11,12 +10,13 @@ const getRandomInt = (maxNum: number, minNum: number) => {
 const BasketView = () => {
   const [pickingListErrorSum, setPickingListErrorSum] = useState([]);
   const { eventStore } = useStores();
+  eventStore.loadEvents();
+
   useEffect(() => {
     const tempArr: any[] = [];
     for (let row = 0; row < 10; ++row) {
       tempArr.push(new Array(20).fill(0));
     }
-
     setPickingListErrorSum(tempArr);
   }, []);
 
@@ -29,7 +29,7 @@ const BasketView = () => {
   const tooltipHandler = (rowIdx: number, colIdx: number): number[] => {
     const retArr: number[] = [];
     for (let i = 0; i < 5; ++i) {
-      if (!eventStore.events[Fulfillment.picking][rowIdx * 100 + colIdx * 5 + i]?.pred) continue;
+      if (!eventStore.events.busket[rowIdx * 100 + colIdx * 5 + i]?.pred) continue;
       retArr.push(rowIdx * 100 + colIdx * 5 + i);
     }
     return retArr;
@@ -42,7 +42,7 @@ const BasketView = () => {
     }
     let errorBasketSum = 0;
     for (let i = 0; i < 5; ++i) {
-      if (eventStore.events[Fulfillment.picking][basketIndex[i]]?.pred) {
+      if (eventStore.events.busket[basketIndex[i]]?.pred) {
         ++errorBasketSum;
       }
     }
@@ -59,7 +59,7 @@ const BasketView = () => {
     const workerId = getRandomInt(5, 0);
     const productId = getRandomInt(10, 0);
     const pred = getRandomInt(2, 0) === 1;
-    if (eventStore.events[Fulfillment.picking][basketIndex]?.pred) return;
+    if (eventStore.events.busket[basketIndex]?.pred) return;
     pickingListErrorSum[basketIndex] = {
       worker_id: workerId,
       busket_id: basketIndex,
