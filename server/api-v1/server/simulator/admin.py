@@ -18,7 +18,7 @@ class AdminPackingSimulationInfo(admin.ModelAdmin):
 class AdminDeliverySimulationInfo(admin.ModelAdmin):
     model = DeliverySimulationInfo
     list_display = ('id', 'num_workers', 'num_packages',
-                    'num_regions', 'num_products', 'human_error', 'window_size', 'created_at')
+                    'num_regions', 'num_products', 'pallet_error_margin', 'human_error', 'window_size', 'created_at')
 
 
 class AdminPickingDetectionEvent(admin.ModelAdmin):
@@ -36,7 +36,7 @@ class AdminPackingDetectionEvent(admin.ModelAdmin):
 class AdminDeliveryDetectionEvent(admin.ModelAdmin):
     model = PackingDetectionEvent
     list_display = ('id', 'worker_id', 'package_id',
-                    'region_id', 'weight', 'operation', 'pred', 'label', 'created_at', 'updated_at')
+                    'region_id', 'error_rate', 'operation', 'pred', 'label', 'created_at', 'updated_at')
 
 
 admin.site.register(PickingSimulationInfo, AdminPickingSimulationInfo)

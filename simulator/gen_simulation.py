@@ -153,7 +153,7 @@ def create_packing(num_orders, num_fillings, num_workers, human_error_prob=0.02)
     return df, product_df
 
 
-def create_delivery(num_orders, num_products, num_regions, num_workers, human_error_prob=0.02):
+def create_delivery(num_orders, num_products, num_regions, num_workers, pallet_error_margin, human_error_prob=0.02):
     '''
     0. 상품 및 주문 랜덤 생성
     1. 각 지역에 대한 포장 상자 랜덤 생성
@@ -183,23 +183,31 @@ def create_delivery(num_orders, num_products, num_regions, num_workers, human_er
 
     for worker_id, package_id, region_id, weight in works:
         error = False
+
+        first_measured = np.random.normal(
+            weight, get_std(weight, pallet_error_margin))
+        second_measured = np.random.normal(
+            weight, get_std(weight, pallet_error_margin))
         if random.random() <= human_error_prob:
             error = True
             rpid = random.randint(0, num_orders - 1)
             while rpid == package_id:
                 rpid = random.randint(0, num_orders - 1)
             error_weight = packages[rpid][1]
-            weight = error_weight
+            second_measured = np.random.normal(
+                error_weight, get_std(error_weight, pallet_error_margin))
         if error:
             human_errors[region_id] = True
-        logs.append([worker_id, package_id, region_id, weight, 'PUT', error])
+        error_rate = abs(first_measured - second_measured) / first_measured
+        logs.append([worker_id, package_id, region_id,
+                    error_rate, 'PUT', error])
         rem_packages[region_id] -= 1
         if rem_packages[region_id] == 0:
             logs.append([worker_id, package_id, region_id,
                          0, 'END', human_errors[region_id]])
 
     df = pd.DataFrame(data=logs, columns=[
-                      'worker_id', 'package_id', 'region_id', 'weight', 'operation', 'label'])
+                      'worker_id', 'package_id', 'region_id', 'error_rate', 'operation', 'label'])
     packages_df = pd.DataFrame(data=packages, columns=[
         'region_id', 'weight'])
     packages_df.index.name = 'package_id'
@@ -214,11 +222,12 @@ if __name__ == '__main__':
     num_workers = 2
     num_fillings = 2
     num_regions = 50
+    pallet_error_margin = 0.0005
 
     human_error_rate = 0.02
 
     picking_df, product_df = create_picking(
-        num_orders, num_products, num_workers)
+        num_orders, num_products, num_workers, human_error_rate)
     picking_df.to_csv('./picking_df.csv')
     product_df.to_csv('./picking_product_df.csv')
     info_df = pd.DataFrame(data=[[num_workers, num_orders, num_products, human_error_rate]], columns=[
@@ -229,7 +238,7 @@ if __name__ == '__main__':
     print(product_df.head(10))
 
     packing_df, filling_df = create_packing(
-        num_orders, num_fillings, num_workers)
+        num_orders, num_fillings, num_workers, human_error_rate)
     packing_df.to_csv('./packing_df.csv')
     filling_df.to_csv('./packing_filling_df.csv')
     info_df = pd.DataFrame(data=[[num_workers, num_orders, num_fillings, human_error_rate]], columns=[
@@ -240,11 +249,11 @@ if __name__ == '__main__':
     print(filling_df.head(10))
 
     deliver_df, packages_df = create_delivery(
-        num_orders, num_products, num_regions, num_workers)
+        num_orders, num_products, num_regions, num_workers, pallet_error_margin, human_error_rate)
     deliver_df.to_csv('./delivery_df.csv')
     packages_df.to_csv('./delivery_packages_df.csv')
-    info_df = pd.DataFrame(data=[[num_workers, num_orders, num_regions, num_products, human_error_rate]], columns=[
-                           'num_workers', 'num_packages', 'num_regions', 'num_products', 'human_error'])
+    info_df = pd.DataFrame(data=[[num_workers, num_orders, num_regions, num_products, pallet_error_margin, human_error_rate]], columns=[
+                           'num_workers', 'num_packages', 'num_regions', 'num_products', 'pallet_error_margin', 'human_error'])
     info_df.to_csv('./delivery_info_df.csv')
     print(deliver_df.head(50))
     print(deliver_df[deliver_df['operation'] == 'END'].head(50))

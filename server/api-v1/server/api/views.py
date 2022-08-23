@@ -110,11 +110,12 @@ class DeliverySimulationInfoViewAPI(APIView):
             examples={
                 "application/json": [
                     {
-                        "id": "d8b8b9d8-200d-4b34-905e-b0830208a261",
+                        "id": "7dbd0fc3-bae4-40af-a6ff-10ed738f1577",
                         "num_workers": 2,
                         "num_packages": 1000,
                         "num_regions": 50,
                         "num_products": 10,
+                        "pallet_error_margin": 0.0005,
                         "human_error": 0.02,
                         "window_size": -1
                     }
@@ -324,15 +325,15 @@ class DeliveryDetectionEventViewAPI(APIView):
             description='Successfully Retrieved Events',
             examples={
                 "application/json": [{
-                    "id": "c895dc75-ea64-445d-9bdb-a73d77a63cc7",
+                    "id": "ef9d2397-dc20-4419-af18-d3f6e76c8c26",
                     "worker_id": 1,
-                    "package_id": 6521,
-                    "region_id": 1,
-                    "weight": 0.8091877218276352,
+                    "package_id": 574,
+                    "region_id": 7,
+                    "error_rate": 0.0005180179897859,
                     "operation": "PUT",
-                    "pred": None,
+                    "pred": False,
                     "label": False,
-                    "created_at": "2022-08-21T03:05:27.346635Z"
+                    "created_at": "2022-08-23T14:39:03.522768Z"
                 }, ]
             }
         ),
