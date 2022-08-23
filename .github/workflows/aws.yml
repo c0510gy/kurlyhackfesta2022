@@ -116,7 +116,7 @@ jobs:
         id: task-def-server
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ steps.task-def-client.output.task-definition }}
+          task-definition: ${{ steps.task-def-client.outputs.task-definition }}
           container-name: ${{ env.SERVER_CONTAINER_NAME }}
           image: ${{ steps.build-server-image.outputs.image }}
 
