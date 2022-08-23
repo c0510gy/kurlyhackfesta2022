@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import useStores from '../../../../hooks/useStores';
+import ReactTooltip from 'react-tooltip';
 import styles from './index.module.scss';
 
 const getRandomInt = (maxNum: number, minNum: number) => {
@@ -15,17 +16,7 @@ const BasketView = () => {
       tempArr.push(new Array(20).fill(0));
     }
 
-    // eventStore.pickingEvents.map((pe) => {
-    //   console.log('pe', pe)
-      // const basketId = pe.busket_id % 1000;
-      // const [row, col] = [Math.floor(basketId / 100), Math.floor(basketId % 100 / 5)];
-      // tempArr[row][col] += 1;
-      // if (pe.operation === 'END'){
-      //   console.log('end', pe)
-      // }
-    // });
     setPickingListErrorSum(tempArr);
-    // console.log('eventStore', eventStore.pickingEvents)
   }, []);
 
   const changeHandler = (rowIdx: number, colIdx: number, value: number) => {
@@ -34,12 +25,13 @@ const BasketView = () => {
     setPickingListErrorSum(copy);
   };
 
-  const clickHander = (rowIdx: number, colIdx: number) => {
-    console.log('These baskets are in error');
+  const tooltipHandler = (rowIdx: number, colIdx: number):number[] => {
+    const retArr:number[] = []
     for (let i = 0; i < 5; ++i) {
       if (!eventStore.pickingEvents[rowIdx * 100 + colIdx * 5 + i]?.pred) continue;
-      console.log('Basket id: ', rowIdx * 100 + colIdx * 5 + i);
+      retArr.push(rowIdx*100 + colIdx*5 + i);
     }
+    return retArr;
   };
 
   const countErrorBaskets = (errorBasketSumOrigin: number, rowIdx: number, colIdx: number): number => {
@@ -89,16 +81,25 @@ const BasketView = () => {
                   const errorBasketSum = countErrorBaskets(value, rowIdx, colIdx);
                   return (
                     <td
-                      key={colIdx}
-                      className={rowIdx % 2 ? styles.tdEnter : styles.tdNoEnter}
-                      onClick={errorBasketSum ? () => clickHander(rowIdx, colIdx) : null}
-                      style={
-                        errorBasketSum
-                          ? { color: 'red', backgroundColor: 'pink', cursor: 'pointer' }
-                          : { backgroundColor: 'green', cursor: 'default' }
-                      }
+                    key={colIdx}
+                    className={rowIdx % 2 ? styles.tdEnter : styles.tdNoEnter}
+                    style={
+                      errorBasketSum
+                      ? { color: 'red', backgroundColor: 'pink', cursor: 'pointer' }
+                      : { backgroundColor: 'rgba(174 214 81)', cursor: 'default' }
+                    }
+                    data-tip={"tooltips"}
+                    data-for={rowIdx.toString() + colIdx.toString()}
                     >
-                      {pickingListErrorSum[rowIdx][colIdx]}
+                      <span
+                      >{pickingListErrorSum[rowIdx][colIdx]}</span>
+                      {errorBasketSum ? <ReactTooltip type="error" effect="solid" id={rowIdx.toString() + colIdx.toString()}>
+                      {tooltipHandler(rowIdx, colIdx).map((ret, idx) => {
+                        return (
+                          <div key={idx+10000}>basket id {ret} has error</div>
+                        )
+                      })}
+                      </ReactTooltip> : null}
                     </td>
                   );
                 })}
