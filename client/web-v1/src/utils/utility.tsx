@@ -1,10 +1,11 @@
 import axios from 'axios';
 import useStores from '../hooks/useStores';
+import configs from '../configs'
 
 export const fetchTest = async () => {
   const { authStore } = useStores()
-
-  const { data } = await axios.get(`http://localhost:8000/accounts/me`, {
+  console.log(`${configs.backendEndPoint}/accounts/me`)
+  const { data } = await axios.get(`${configs.backendEndPoint}/accounts/me`, {
     params: {  },
     headers: { Authorization: `Bearer ${authStore.getIdToken()}` },
   });

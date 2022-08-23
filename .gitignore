@@ -1,7 +1,10 @@
 config.json
+**/configs/development.tsx
+**/configs/production.tsx
 node_modules
 dist
 *debug.log
+pandas/
 
 # mac
 .DS_Store

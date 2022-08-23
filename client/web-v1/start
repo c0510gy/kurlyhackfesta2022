@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd /gravimetric_web
+
+npm run prod
