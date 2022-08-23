@@ -1,11 +1,29 @@
 import { makeAutoObservable } from 'mobx';
 import { Auth } from 'aws-amplify';
+import configs from '../../configs';
+import axios from 'axios';
 
 const authStore = function createAuthStore() {
   return makeAutoObservable({
     idToken: '',
     accessToken: '',
     name: '',
+
+    async fetchTest(): Promise<void> {
+      const getIdToken = await this.getIdToken();
+      const { data } = await axios.get(`${configs.backendEndPoint}/accounts/me`, {
+        params: {},
+        headers: { Authorization: `Bearer ${getIdToken}` },
+      });
+
+      if (data.error) {
+        return null;
+      }
+      console.log('####', data);
+
+      return data;
+    },
+
     updateToken(idToken?: string, accessToken?: string, name?: string): void {
       this.idToken = idToken || this.idToken;
       this.accessToken = accessToken || this.accessToken;
@@ -16,16 +34,19 @@ const authStore = function createAuthStore() {
       this.accessToken = '';
       this.name = '';
     },
-    getIdToken(): void {
-      Auth.currentAuthenticatedUser().then((user) => {
-        const idToken = user.signInUserSession.idToken.jwtToken;
-        if (idToken === this.idToken) return idToken;
-        const accessToken = user.signInUserSession.accessToken.jwtToken;
-        const name = user.attributes.nickname;
+    async getIdToken(): Promise<string> {
+      const user = await Auth.currentAuthenticatedUser();
 
-        this.updateToken(idToken, accessToken, name);
+      const idToken = user.signInUserSession.idToken.jwtToken;
+      if (idToken === this.idToken) {
+        console.log('retur', idToken);
         return idToken;
-      });
+      }
+      const accessToken = user.signInUserSession.accessToken.jwtToken;
+      const name = user.attributes.nickname;
+
+      await this.updateToken(idToken, accessToken, name);
+      return idToken;
     },
     async signOut(): Promise<void> {
       await Auth.signOut();

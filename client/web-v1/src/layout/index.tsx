@@ -1,17 +1,13 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '../components/ContentElements/Header';
-import { Auth } from 'aws-amplify';
-import { fetchTest } from '../utils/utility';
+import useStores from '../hooks/useStores';
 
 const Layouts: React.FunctionComponent = () => {
+  const { authStore } = useStores();
   /* TODO : Remove the below button  */
   const printT = (): void => {
-    Auth.currentAuthenticatedUser().then((receivedUser) => {
-      console.log(receivedUser.signInUserSession);
-      console.log('idToken: ', receivedUser.signInUserSession.idToken.jwtToken);
-      fetchTest();
-    });
+    authStore.fetchTest();
   };
 
   return (
