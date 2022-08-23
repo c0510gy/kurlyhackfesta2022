@@ -14,6 +14,35 @@ class PickingSimulationViewAPI(APIView):
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    her_param = openapi.Parameter(
+        'her',
+        openapi.IN_QUERY,
+        description='Human-error rate (percent). Allowed values: [0.3, 1, 2, 50]',
+        required=False,
+        type=openapi.TYPE_NUMBER
+    )
+    winsize_param = openapi.Parameter(
+        'winsize',
+        openapi.IN_QUERY,
+        description='window size parameter for prediction (default: -1)',
+        required=False,
+        type=openapi.TYPE_INTEGER
+    )
+    min_interval_param = openapi.Parameter(
+        'min_interval',
+        openapi.IN_QUERY,
+        description='Minimum interval between event logs (seconds)',
+        required=False,
+        type=openapi.TYPE_NUMBER
+    )
+    max_interval_param = openapi.Parameter(
+        'max_interval',
+        openapi.IN_QUERY,
+        description='Maximum interval between event logs (seconds)',
+        required=False,
+        type=openapi.TYPE_NUMBER
+    )
+
     response_schema_dict = {
         '200': 'Success'
     }
@@ -21,17 +50,66 @@ class PickingSimulationViewAPI(APIView):
     @swagger_auto_schema(
         tags=['Control Simulation'],
         operation_description='Start Picking Simulation',
-        manual_parameters=[],
+        manual_parameters=[her_param, winsize_param,
+                           min_interval_param, max_interval_param],
         responses=response_schema_dict,
     )
     def post(self, request):
-        picking_simulation(verbose_name="picking_simulation")
+        # Human-error rate
+        her_ = request.GET.get('her', None)
+        # window size
+        winsize_ = request.GET.get('winsize', -1)
+        # min interval
+        min_interval_ = request.GET.get('min_interval', None)
+        # max interval
+        max_interval_ = request.GET.get('max_interval', None)
+
+        if her_ is not None:
+            her_ = float(her_)
+        if winsize_ is not None:
+            winsize_ = int(winsize_)
+        if min_interval_ is not None:
+            min_interval_ = float(min_interval_)
+        if max_interval_ is not None:
+            max_interval_ = float(max_interval_)
+
+        picking_simulation(her=her_, winsize=winsize_, min_interval=min_interval_,
+                           max_interval=max_interval_, verbose_name="picking_simulation")
         return Response(status=status.HTTP_200_OK)
 
 
 class PackingSimulationViewAPI(APIView):
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    her_param = openapi.Parameter(
+        'her',
+        openapi.IN_QUERY,
+        description='Human-error rate (percent). Allowed values: [0.3, 1, 2, 50]',
+        required=False,
+        type=openapi.TYPE_NUMBER
+    )
+    winsize_param = openapi.Parameter(
+        'winsize',
+        openapi.IN_QUERY,
+        description='window size parameter for prediction (default: -1)',
+        required=False,
+        type=openapi.TYPE_INTEGER
+    )
+    min_interval_param = openapi.Parameter(
+        'min_interval',
+        openapi.IN_QUERY,
+        description='Minimum interval between event logs (seconds)',
+        required=False,
+        type=openapi.TYPE_NUMBER
+    )
+    max_interval_param = openapi.Parameter(
+        'max_interval',
+        openapi.IN_QUERY,
+        description='Maximum interval between event logs (seconds)',
+        required=False,
+        type=openapi.TYPE_NUMBER
+    )
 
     response_schema_dict = {
         '200': 'Success'
@@ -40,17 +118,66 @@ class PackingSimulationViewAPI(APIView):
     @swagger_auto_schema(
         tags=['Control Simulation'],
         operation_description='Start Packing Simulation',
-        manual_parameters=[],
+        manual_parameters=[her_param, winsize_param,
+                           min_interval_param, max_interval_param],
         responses=response_schema_dict,
     )
     def post(self, request):
-        packing_simulation(verbose_name="packing_simulation")
+        # Human-error rate
+        her_ = request.GET.get('her', None)
+        # window size
+        winsize_ = request.GET.get('winsize', -1)
+        # min interval
+        min_interval_ = request.GET.get('min_interval', None)
+        # max interval
+        max_interval_ = request.GET.get('max_interval', None)
+
+        if her_ is not None:
+            her_ = float(her_)
+        if winsize_ is not None:
+            winsize_ = int(winsize_)
+        if min_interval_ is not None:
+            min_interval_ = float(min_interval_)
+        if max_interval_ is not None:
+            max_interval_ = float(max_interval_)
+
+        packing_simulation(her=her_, winsize=winsize_, min_interval=min_interval_,
+                           max_interval=max_interval_, verbose_name="packing_simulation")
         return Response(status=status.HTTP_200_OK)
 
 
 class DeliverySimulationViewAPI(APIView):
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    her_param = openapi.Parameter(
+        'her',
+        openapi.IN_QUERY,
+        description='Human-error rate (percent). Allowed values: [0.3, 1, 2, 50]',
+        required=False,
+        type=openapi.TYPE_NUMBER
+    )
+    winsize_param = openapi.Parameter(
+        'winsize',
+        openapi.IN_QUERY,
+        description='window size parameter for prediction (default: -1)',
+        required=False,
+        type=openapi.TYPE_INTEGER
+    )
+    min_interval_param = openapi.Parameter(
+        'min_interval',
+        openapi.IN_QUERY,
+        description='Minimum interval between event logs (seconds)',
+        required=False,
+        type=openapi.TYPE_NUMBER
+    )
+    max_interval_param = openapi.Parameter(
+        'max_interval',
+        openapi.IN_QUERY,
+        description='Maximum interval between event logs (seconds)',
+        required=False,
+        type=openapi.TYPE_NUMBER
+    )
 
     response_schema_dict = {
         '200': 'Success'
@@ -59,11 +186,31 @@ class DeliverySimulationViewAPI(APIView):
     @swagger_auto_schema(
         tags=['Control Simulation'],
         operation_description='Start Delivery Simulation',
-        manual_parameters=[],
+        manual_parameters=[her_param, winsize_param,
+                           min_interval_param, max_interval_param],
         responses=response_schema_dict,
     )
     def post(self, request):
-        delivery_simulation(verbose_name="delivery_simulation")
+        # Human-error rate
+        her_ = request.GET.get('her', None)
+        # window size
+        winsize_ = request.GET.get('winsize', -1)
+        # min interval
+        min_interval_ = request.GET.get('min_interval', None)
+        # max interval
+        max_interval_ = request.GET.get('max_interval', None)
+
+        if her_ is not None:
+            her_ = float(her_)
+        if winsize_ is not None:
+            winsize_ = int(winsize_)
+        if min_interval_ is not None:
+            min_interval_ = float(min_interval_)
+        if max_interval_ is not None:
+            max_interval_ = float(max_interval_)
+
+        delivery_simulation(her=her_, winsize=winsize_, min_interval=min_interval_,
+                            max_interval=max_interval_, verbose_name="delivery_simulation")
         return Response(status=status.HTTP_200_OK)
 
 
