@@ -19,8 +19,6 @@ const authStore = function createAuthStore() {
       if (data.error) {
         return null;
       }
-      console.log('####', data);
-
       return data;
     },
 
@@ -39,7 +37,6 @@ const authStore = function createAuthStore() {
 
       const idToken = user.signInUserSession.idToken.jwtToken;
       if (idToken === this.idToken) {
-        console.log('retur', idToken);
         return idToken;
       }
       const accessToken = user.signInUserSession.accessToken.jwtToken;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Fulfillment } from '../../components/ContentElements/Header/type';
+import { Fulfillment } from '../../stores/event/type';
 import styles from './index.module.scss';
 
 const Delivery: React.FunctionComponent = () => {

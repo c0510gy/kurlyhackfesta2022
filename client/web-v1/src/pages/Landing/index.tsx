@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { Auth } from 'aws-amplify';
 import RadioButtonGroup from '../../components/ContentElements/RadioButtonGroup';
 import Button from '../../components/ReusableElements/Button';
-import { SimulationErrorRate } from '../../components/ContentElements/RadioButtonGroup/type';
+import { HumanErrorRate } from '../../components/ContentElements/RadioButtonGroup/type';
 import useStores from '../../hooks/useStores';
 
 import styles from './index.module.scss';
@@ -20,7 +20,7 @@ const Landing: React.FunctionComponent = (): JSX.Element => {
     });
   }, []);
 
-  const [value, setValue] = useState<string>(SimulationErrorRate.Primary);
+  const [value, setValue] = useState<string>(HumanErrorRate.Primary);
 
   const radioButtonClickHandler = (event: React.ChangeEvent<HTMLInputElement>): void => {
     let target = event.target as HTMLInputElement;
@@ -41,7 +41,7 @@ const Landing: React.FunctionComponent = (): JSX.Element => {
             <RadioButtonGroup
               value={value}
               text={'휴먼 에러율을 설정하여 시작해보세요.'}
-              radioObject={{ buttons: Object.values(SimulationErrorRate) }}
+              radioObject={{ buttons: Object.values(HumanErrorRate) }}
               onChangeHandler={radioButtonClickHandler}
             />
           </div>

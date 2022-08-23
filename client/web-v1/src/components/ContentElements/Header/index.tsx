@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Fulfillment } from './type';
 import Button from '../../ReusableElements/Button';
 import useStores from '../../../hooks/useStores';
 import styles from './index.module.scss';
+import { Fulfillment } from '../../../stores/event/type';
 
 /* TODO : should we use enum type for text or not? */
 const routes = [
