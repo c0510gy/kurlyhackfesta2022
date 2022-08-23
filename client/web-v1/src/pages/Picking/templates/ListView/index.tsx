@@ -26,6 +26,8 @@ const tableColumnByStep: { [key: string]: EventColumn[] } = {
 const ListView: React.FunctionComponent = () => {
   const { eventStore } = useStores();
 
+  if (!eventStore.fulfilmentStep) return;
+
   return (
     <div className={styles.listView}>
       <div className={styles.tableWrapper}>
@@ -43,7 +45,6 @@ const ListView: React.FunctionComponent = () => {
           </thead>
           <tbody className={styles.tableBody}>
             {eventStore.filterEvents.map((event, index) => {
-              console.log('event', event);
               return (
                 <tr key={index}>
                   {Object.entries(event).map(([key, value], index) => {

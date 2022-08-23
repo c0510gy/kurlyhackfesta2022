@@ -20,10 +20,11 @@ export const initFilterValues: { [key: string]: { [key: string]: Option } } = {
     [EventColumn.created_at]: undefined,
   },
   [Fulfillment.packing]: {
-    [EventColumn.package_id]: undefined,
-    [EventColumn.filling_id]: undefined,
+    [EventColumn.id]: undefined,
     [EventColumn.worker_id]: undefined,
     [EventColumn.product_id]: undefined,
+    [EventColumn.package_id]: undefined,
+    [EventColumn.filling_id]: undefined,
     [EventColumn.weight]: undefined,
     [EventColumn.operation]: undefined,
     [EventColumn.pred]: undefined,
@@ -31,9 +32,11 @@ export const initFilterValues: { [key: string]: { [key: string]: Option } } = {
     [EventColumn.created_at]: undefined,
   },
   [Fulfillment.delivery]: {
-    [EventColumn.package_id]: undefined,
+    [EventColumn.id]: undefined,
     [EventColumn.worker_id]: undefined,
     [EventColumn.product_id]: undefined,
+    [EventColumn.package_id]: undefined,
+    [EventColumn.region_id]: undefined,
     [EventColumn.weight]: undefined,
     [EventColumn.operation]: undefined,
     [EventColumn.pred]: undefined,
@@ -97,15 +100,20 @@ const eventStore = function createEventStore() {
       try {
         const getIdToken = await authStore.getIdToken();
 
-        const { data } = await axios.get(`${configs.backendEndPoint}/api/events/${step}`, {
+        // const { data: options } = await axios.get(`${configs.backendEndPoint}/api/info/${step}`, {
+        //   params: {},
+        //   headers: { Authorization: `Bearer ${getIdToken}` },
+        // });
+
+        const { data: events } = await axios.get(`${configs.backendEndPoint}/api/events/${step}`, {
           params: { limits: 100 },
           headers: { Authorization: `Bearer ${getIdToken}` },
         });
 
         runInAction(() => {
-          if (step === Fulfillment.picking) this.pickingEvents = data;
-          else if (step === Fulfillment.packing) this.packingEvents = data;
-          else if (step === Fulfillment.delivery) this.deliveryEvents = data;
+          if (step === Fulfillment.picking) this.pickingEvents = events;
+          else if (step === Fulfillment.packing) this.packingEvents = events;
+          else if (step === Fulfillment.delivery) this.deliveryEvents = events;
         });
       } catch (error) {
         throw error;
