@@ -1,17 +1,35 @@
+import { observer } from 'mobx-react-lite';
 import React from 'react';
 import Select from 'react-select';
 import { EventColumn } from '../../../pages/Picking/type';
+import useStores from '../../../hooks/useStores';
 
-export interface SelectOptionProps {
-  col: EventColumn;
-  options: Array<{
-    label: string;
-    value: string;
-  }>;
+export interface Option {
+  label: string;
+  value: string | number;
 }
 
-const SelectOption: React.FunctionComponent<SelectOptionProps> = ({ col, options }: SelectOptionProps) => {
-  return <Select placeholder={col} options={options} />;
+export interface SelectOptionProps {
+  placeholder?: string;
+  col: EventColumn;
+  options: readonly Option[];
+}
+
+const SelectOption: React.FunctionComponent<SelectOptionProps> = ({ placeholder, col, options }: SelectOptionProps) => {
+  const { eventStore } = useStores();
+
+  const filterChangeHandler = (col: EventColumn, option: Option): void => {
+    eventStore.updateFilterValueByKey({ [col]: option } as any);
+  };
+
+  return (
+    <Select
+      placeholder={placeholder}
+      options={options}
+      onChange={(newValue: Option) => filterChangeHandler(col, newValue)}
+      isClearable
+    />
+  );
 };
 
-export default SelectOption;
+export default observer(SelectOption);
