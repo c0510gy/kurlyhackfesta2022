@@ -44,6 +44,13 @@ class PickingDetectionEventViewAPI(APIView):
         required=False,
         type=openapi.TYPE_INTEGER
     )
+    order_param = openapi.Parameter(
+        'descending_order',
+        openapi.IN_QUERY,
+        description='If true, it will retrieve data in descending order of timestamp',
+        required=False,
+        type=openapi.TYPE_INTEGER
+    )
 
     response_schema_dict = {
         "200": openapi.Response(
@@ -67,7 +74,7 @@ class PickingDetectionEventViewAPI(APIView):
     @swagger_auto_schema(
         tags=['Retrieve Human-error Detection Events'],
         operation_description='Retrieve Human-error Detection Events in Picking Process',
-        manual_parameters=[from_param, limits_param],
+        manual_parameters=[from_param, limits_param, order_param],
         responses=response_schema_dict,
     )
     def get(self, request):
@@ -75,16 +82,19 @@ class PickingDetectionEventViewAPI(APIView):
         from_ = request.GET.get('from', None)
         # number of events to retrieve
         limits_ = request.GET.get('limits', None)
+        # descending order
+        order_ = request.GET.get('descending_order', False)
 
         if from_ is None:
-            queryset = PickingDetectionEvent.objects.all().order_by('created_at')
+            queryset = PickingDetectionEvent.objects.all().order_by(
+                '-created_at' if order_ == True else 'created_at')
         else:
             from_event = PickingDetectionEvent.objects.get(id=from_)
 
             print('from_event.created_at', from_event.created_at)
 
             queryset = PickingDetectionEvent.objects.filter(
-                created_at__gt=from_event.created_at).order_by('created_at')
+                created_at__gt=from_event.created_at).order_by('-created_at' if order_ == True else 'created_at')
 
         if limits_ is not None:
             limits_ = int(limits_)
@@ -112,6 +122,13 @@ class PackingDetectionEventViewAPI(APIView):
         required=False,
         type=openapi.TYPE_INTEGER
     )
+    order_param = openapi.Parameter(
+        'descending_order',
+        openapi.IN_QUERY,
+        description='If true, it will retrieve data in descending order of timestamp',
+        required=False,
+        type=openapi.TYPE_INTEGER
+    )
 
     response_schema_dict = {
         "200": openapi.Response(
@@ -135,7 +152,7 @@ class PackingDetectionEventViewAPI(APIView):
     @swagger_auto_schema(
         tags=['Retrieve Human-error Detection Events'],
         operation_description='Retrieve Human-error Detection Events in Packing Process',
-        manual_parameters=[from_param, limits_param],
+        manual_parameters=[from_param, limits_param, order_param],
         responses=response_schema_dict,
     )
     def get(self, request):
@@ -143,16 +160,19 @@ class PackingDetectionEventViewAPI(APIView):
         from_ = request.GET.get('from', None)
         # number of events to retrieve
         limits_ = request.GET.get('limits', None)
+        # descending order
+        order_ = request.GET.get('descending_order', False)
 
         if from_ is None:
-            queryset = PackingDetectionEvent.objects.all().order_by('created_at')
+            queryset = PackingDetectionEvent.objects.all().order_by(
+                '-created_at' if order_ == True else 'created_at')
         else:
             from_event = PackingDetectionEvent.objects.get(id=from_)
 
             print('from_event.created_at', from_event.created_at)
 
             queryset = PackingDetectionEvent.objects.filter(
-                created_at__gt=from_event.created_at).order_by('created_at')
+                created_at__gt=from_event.created_at).order_by('-created_at' if order_ == True else 'created_at')
 
         if limits_ is not None:
             limits_ = int(limits_)
@@ -180,6 +200,13 @@ class DeliveryDetectionEventViewAPI(APIView):
         required=False,
         type=openapi.TYPE_INTEGER
     )
+    order_param = openapi.Parameter(
+        'descending_order',
+        openapi.IN_QUERY,
+        description='If true, it will retrieve data in descending order of timestamp',
+        required=False,
+        type=openapi.TYPE_INTEGER
+    )
 
     response_schema_dict = {
         "200": openapi.Response(
@@ -203,7 +230,7 @@ class DeliveryDetectionEventViewAPI(APIView):
     @swagger_auto_schema(
         tags=['Retrieve Human-error Detection Events'],
         operation_description='Retrieve Human-error Detection Events in Delivery Process',
-        manual_parameters=[from_param, limits_param],
+        manual_parameters=[from_param, limits_param, order_param],
         responses=response_schema_dict,
     )
     def get(self, request):
@@ -211,16 +238,19 @@ class DeliveryDetectionEventViewAPI(APIView):
         from_ = request.GET.get('from', None)
         # number of events to retrieve
         limits_ = request.GET.get('limits', None)
+        # descending order
+        order_ = request.GET.get('descending_order', False)
 
         if from_ is None:
-            queryset = DeliveryDetectionEvent.objects.all().order_by('created_at')
+            queryset = DeliveryDetectionEvent.objects.all().order_by(
+                '-created_at' if order_ == True else 'created_at')
         else:
             from_event = DeliveryDetectionEvent.objects.get(id=from_)
 
             print('from_event.created_at', from_event.created_at)
 
             queryset = DeliveryDetectionEvent.objects.filter(
-                created_at__gt=from_event.created_at).order_by('created_at')
+                created_at__gt=from_event.created_at).order_by('-created_at' if order_ == True else 'created_at')
 
         if limits_ is not None:
             limits_ = int(limits_)
