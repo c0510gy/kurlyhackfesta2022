@@ -86,7 +86,7 @@ const BasketView = () => {
                     style={
                       errorBasketSum
                       ? { color: 'red', backgroundColor: 'pink', cursor: 'pointer' }
-                      : { backgroundColor: 'rgba(174 214 81)', cursor: 'default' }
+                      : { backgroundColor: 'rgba(99 163 230)', cursor: 'default' }
                     }
                     data-tip={"tooltips"}
                     data-for={rowIdx.toString() + colIdx.toString()}
