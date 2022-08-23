@@ -1,41 +1,15 @@
-import React, { useState } from 'react';
-import { EventView } from './type';
-import { Fulfillment } from '../../components/ContentElements/Header/type';
-import Button from '../../components/ReusableElements/Button';
-import ListView from './ListView';
-import BasketView from './BasketView';
-import styles from './index.module.scss';
+import { observer } from 'mobx-react-lite';
+import React from 'react';
+import PickingTemplate from './templates';
+import useStores from '../../hooks/useStores';
 
-const Picking: React.FunctionComponent = () => {
-  const [selectedView, setSelectedView] = useState(EventView.ListView);
+const Picking: React.FunctionComponent = (): JSX.Element => {
+  const { eventStore } = useStores();
 
-  const viewContent: { [key: string]: JSX.Element } = {
-    [EventView.ListView]: <ListView />,
-    [EventView.BasketView]: <BasketView />,
-  };
+  // Load events logs
+  eventStore.loadEvents();
 
-  return (
-    <div className={styles.container}>
-      <h2>{Fulfillment.Picking}</h2>
-      <div className={styles.btnWrapper}>
-        {Object.entries(EventView).map((view) => {
-          const [key, value] = view;
-          return (
-            <Button
-              key={key} /* TODO : use uuid for key */
-              className={selectedView === value ? styles.selectedBtn : styles.button}
-              type={'button'}
-              clickHandler={(): void => setSelectedView(value)}
-            >
-              {value}
-            </Button>
-          );
-        })}
-      </div>
-
-      <section>{viewContent[selectedView]}</section>
-    </div>
-  );
+  return <PickingTemplate />;
 };
 
-export default Picking;
+export default observer(Picking);

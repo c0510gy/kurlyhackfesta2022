@@ -1,7 +1,10 @@
 import { makeAutoObservable } from 'mobx';
+import axios from 'axios';
+import configs from '../../configs';
+import useStores from '../../hooks/useStores';
 import { Fulfillment } from '../../components/ContentElements/Header/type';
 import { Option } from '../../components/ReusableElements/Select';
-import { EventColumn } from '../../pages/Picking/type';
+import { EventColumn, Event } from '../../pages/Picking/type';
 import { FilterValue } from './type';
 
 const option: Option = { label: '', value: '' };
@@ -38,38 +41,10 @@ export const initFilterValues: { [key: string]: { [key: string]: Option } } = {
 };
 
 /* TODO : Replace temp options data with the real one */
-export const optionssss: readonly Option[] = [
+export const testOption: readonly Option[] = [
   { label: '0', value: 0 },
   { label: '1', value: 1 },
   { label: '2', value: 2 },
-];
-
-/* TODO : get events from event store observerble */
-const pickingEvents = [
-  {
-    [EventColumn.WorkerID]: 0,
-    [EventColumn.BasketID]: 1,
-    [EventColumn.ProductID]: 9,
-    [EventColumn.Weight]: 0.41740172538650305,
-    [EventColumn.Operation]: 'PUT',
-    [EventColumn.Label]: 'False',
-  },
-  {
-    [EventColumn.WorkerID]: 1,
-    [EventColumn.BasketID]: 0,
-    [EventColumn.ProductID]: 2,
-    [EventColumn.Weight]: 0.4940190375572947,
-    [EventColumn.Operation]: 'PUT',
-    [EventColumn.Label]: 'False',
-  },
-  {
-    [EventColumn.WorkerID]: 2,
-    [EventColumn.BasketID]: 1,
-    [EventColumn.ProductID]: 9,
-    [EventColumn.Weight]: 0.4969732191272813,
-    [EventColumn.Operation]: 'PUT',
-    [EventColumn.Label]: 'False',
-  },
 ];
 
 const eventStore = function createEventStore() {
@@ -77,9 +52,9 @@ const eventStore = function createEventStore() {
     fulfilmentStep: Fulfillment.Picking,
 
     /* TODO : the events has to be object like filterValues? */
-    pickingEvents: pickingEvents,
-    packingEvents: pickingEvents,
-    deliveryEvents: pickingEvents,
+    pickingEvents: [] as Event[],
+    packingEvents: [] as Event[],
+    deliveryEvents: [] as Event[],
 
     filterValues: {
       picking: initFilterValues[Fulfillment.Picking],
@@ -87,9 +62,38 @@ const eventStore = function createEventStore() {
       delivery: initFilterValues[Fulfillment.Delivery],
     } as { [key: string]: FilterValue },
 
-    get filterEvents(): Array<any> {
+    async loadEvents(): Promise<void> {
+      const { authStore } = useStores();
+
+      const getIdToken = await authStore.getIdToken();
+      const { data } = await axios.get(`${configs.backendEndPoint}/api/events/picking`, {
+        params: { limits: 100 },
+        headers: { Authorization: `Bearer ${getIdToken}` },
+      });
+
+      this.pickingEvents = data.map((event: Event) => {
+        return {
+          [EventColumn.ID]: event.id,
+          [EventColumn.BasketID]: event.busket_id,
+          [EventColumn.WorkerID]: event.worker_id,
+          [EventColumn.ProductID]: event.product_id,
+          [EventColumn.Weight]: event.weight,
+          [EventColumn.Operation]: event.operation,
+          [EventColumn.Label]: event.label,
+          [EventColumn.PRED]: event.pred,
+          [EventColumn.CreatedAt]: event.created_at,
+        };
+      });
+
+      // const packingEvents = '';
+      // const deliveryEvents = '';
+    },
+
+    get filterEvents(): Array<Event> {
       const events = this.pickingEvents;
       const step = this.fulfilmentStep.toLowerCase();
+
+      console.log('events', events);
 
       if (events.length === 0) return [];
       const filterValues = this.filterValues[step];

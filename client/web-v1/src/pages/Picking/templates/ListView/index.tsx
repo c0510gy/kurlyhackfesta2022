@@ -1,21 +1,22 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
-import { Fulfillment } from '../../../components/ContentElements/Header/type';
-import { EventColumn } from '../type';
-import useStores from '../../../hooks/useStores';
-import SelectFilter from '../../../components/ReusableElements/Select';
+import { Fulfillment } from '../../../../components/ContentElements/Header/type';
+import { EventColumn } from '../../type';
+import useStores from '../../../../hooks/useStores';
+import SelectFilter from '../../../../components/ReusableElements/Select';
+import { testOption } from '../../../../stores/event';
 import styles from './index.module.scss';
-import { optionssss } from '../../../stores/event';
 
 const tableColumnByStep: { [key: string]: EventColumn[] } = {
   [Fulfillment.Picking]: [
+    EventColumn.ID,
     EventColumn.BasketID,
     EventColumn.WorkerID,
     EventColumn.ProductID,
     EventColumn.Weight,
     EventColumn.Operation,
     EventColumn.Label,
-    // EventColumn.Timestamp,
+    EventColumn.CreatedAt,
   ],
   [Fulfillment.Packing]: [],
   [Fulfillment.Delivery]: [],
@@ -33,7 +34,7 @@ const ListView: React.FunctionComponent = () => {
               {tableColumnByStep[eventStore.fulfilmentStep].map((col, index) => {
                 return (
                   <th key={index}>
-                    <SelectFilter col={col} options={optionssss} />
+                    <SelectFilter col={col} options={testOption} />
                   </th>
                 );
               })}
