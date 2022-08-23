@@ -100,25 +100,31 @@ const eventStore = function createEventStore() {
       try {
         const getIdToken = await authStore.getIdToken();
 
-        // const { data: options } = await axios.get(`${configs.backendEndPoint}/api/info/${step}`, {
-        //   params: {},
-        //   headers: { Authorization: `Bearer ${getIdToken}` },
-        // });
+        const tempArr:any[] = new Array(1000);
 
         const { data: events } = await axios.get(`${configs.backendEndPoint}/api/events/${step}`, {
-          params: { limits: 100 },
+          // params: { limits: 100 },
           headers: { Authorization: `Bearer ${getIdToken}` },
-        });
+        })
 
         runInAction(() => {
-          if (step === Fulfillment.picking) this.pickingEvents = events;
+          if (step === Fulfillment.picking) {
+            events.map((response: { busket_id: number; }) => {
+              const busketId = response?.busket_id || -1;
+              if (busketId < 0)
+                return;
+              if (tempArr[busketId]?.pred)
+                return;
+              tempArr[busketId] = response;
+            })
+            this.pickingEvents = tempArr;
+          }
           else if (step === Fulfillment.packing) this.packingEvents = events;
           else if (step === Fulfillment.delivery) this.deliveryEvents = events;
         });
       } catch (error) {
         throw error;
       }
-
       // .map((event: Event) => {
       //   return {
       //     [EventColumn.ID]: event.id,

@@ -15,12 +15,17 @@ const BasketView = () => {
       tempArr.push(new Array(20).fill(0));
     }
 
-    eventStore.pickingEvents.map((pe) => {
-      const basketId = pe.busket_id % 1000;
-      const [row, col] = [Math.floor(basketId / 100), Math.floor(basketId % 100 / 5)];
-      tempArr[row][col] += 1;
-    });
+    // eventStore.pickingEvents.map((pe) => {
+    //   console.log('pe', pe)
+      // const basketId = pe.busket_id % 1000;
+      // const [row, col] = [Math.floor(basketId / 100), Math.floor(basketId % 100 / 5)];
+      // tempArr[row][col] += 1;
+      // if (pe.operation === 'END'){
+      //   console.log('end', pe)
+      // }
+    // });
     setPickingListErrorSum(tempArr);
+    // console.log('eventStore', eventStore.pickingEvents)
   }, []);
 
   const changeHandler = (rowIdx: number, colIdx: number, value: number) => {
@@ -32,7 +37,7 @@ const BasketView = () => {
   const clickHander = (rowIdx: number, colIdx: number) => {
     console.log('These baskets are in error');
     for (let i = 0; i < 5; ++i) {
-      if (!eventStore.pickingEvents[rowIdx * 100 + colIdx * 5 + i].pred) continue;
+      if (!eventStore.pickingEvents[rowIdx * 100 + colIdx * 5 + i]?.pred) continue;
       console.log('Basket id: ', rowIdx * 100 + colIdx * 5 + i);
     }
   };
