@@ -16,7 +16,7 @@ const PickingTemplate: React.FunctionComponent = () => {
 
   return (
     <div className={styles.container}>
-      <h2>{Fulfillment.Picking}</h2>
+      <h2>{Fulfillment.picking}</h2>
       <div className={styles.btnWrapper}>
         {Object.entries(EventView).map((view) => {
           const [key, value] = view;
