@@ -1,15 +1,15 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 import axios from 'axios';
 import configs from '../../configs';
 import useStores from '../../hooks/useStores';
 import { Option } from '../../components/ReusableElements/Select';
 import { EventColumn, Event } from '../../pages/Picking/type';
-import { FilterValue, Fulfillment } from './type';
+import { FilterValue, Fulfillment, OptionInfo } from './type';
 
 const option: Option = { label: '', value: '' };
 
 export const initFilterValues: { [key: string]: { [key: string]: Option } } = {
-  [Fulfillment.Picking]: {
+  [Fulfillment.picking]: {
     [EventColumn.id]: undefined,
     [EventColumn.worker_id]: undefined,
     [EventColumn.product_id]: undefined,
@@ -19,7 +19,7 @@ export const initFilterValues: { [key: string]: { [key: string]: Option } } = {
     // [EventColumn.Label]: undefined,
     [EventColumn.created_at]: undefined,
   },
-  [Fulfillment.Packing]: {
+  [Fulfillment.packing]: {
     [EventColumn.package_id]: undefined,
     [EventColumn.filling_id]: undefined,
     [EventColumn.worker_id]: undefined,
@@ -30,7 +30,7 @@ export const initFilterValues: { [key: string]: { [key: string]: Option } } = {
     // [EventColumn.Label]: undefined,
     [EventColumn.created_at]: undefined,
   },
-  [Fulfillment.Delivery]: {
+  [Fulfillment.delivery]: {
     [EventColumn.package_id]: undefined,
     [EventColumn.worker_id]: undefined,
     [EventColumn.product_id]: undefined,
@@ -51,30 +51,61 @@ export const testOption: readonly Option[] = [
 
 const eventStore = function createEventStore() {
   return makeAutoObservable({
-    fulfilmentStep: Fulfillment.Picking,
+    fulfilmentStep: Fulfillment.picking as Fulfillment,
 
     /* TODO : the events has to be object like filterValues? */
     pickingEvents: [] as Array<Event>,
     packingEvents: [] as Array<Event>,
     deliveryEvents: [] as Array<Event>,
+    optionInfo: {
+      picking: {} as OptionInfo,
+      packing: {} as OptionInfo,
+      delivery: {} as OptionInfo,
+    },
 
     filterValues: {
-      picking: initFilterValues[Fulfillment.Picking],
-      packing: initFilterValues[Fulfillment.Packing],
-      delivery: initFilterValues[Fulfillment.Delivery],
+      picking: initFilterValues[Fulfillment.picking],
+      packing: initFilterValues[Fulfillment.packing],
+      delivery: initFilterValues[Fulfillment.delivery],
     } as { [key: string]: FilterValue },
 
-    async loadEvents(step: Fulfillment): Promise<void> {
+    get filterEvents(): Array<Event> {
+      const events = this.pickingEvents;
+      const step = this.fulfilmentStep;
+
+      if (events.length === 0) return [];
+      const filterValues = this.filterValues[step];
+
+      let filteredEvents: Array<Event> = [...events];
+
+      filteredEvents.filter((event: any) =>
+        Object.entries(filterValues)
+          .filter(([, option]) => !!option)
+          .reduce((prev, [col, option]) => prev && event[col] == option, true),
+      );
+
+      return filteredEvents;
+    },
+
+    async loadEvents(): Promise<void> {
       const { authStore } = useStores();
+      const step = this.fulfilmentStep;
 
-      const getIdToken = await authStore.getIdToken();
+      try {
+        const getIdToken = await authStore.getIdToken();
 
-      const { data } = await axios.get(`${configs.backendEndPoint}/api/events/${step.toLowerCase()}`, {
-        params: { limits: 100 },
-        headers: { Authorization: `Bearer ${getIdToken}` },
-      });
+        const { data } = await axios.get(`${configs.backendEndPoint}/api/events/${step}`, {
+          params: { limits: 100 },
+          headers: { Authorization: `Bearer ${getIdToken}` },
+        });
 
-      this.pickingEvents = data;
+        runInAction(() => {
+          this.pickingEvents = data;
+        });
+      } catch (error) {
+        throw error;
+      }
+
       // .map((event: Event) => {
       //   return {
       //     [EventColumn.ID]: event.id,
@@ -93,31 +124,15 @@ const eventStore = function createEventStore() {
       // const deliveryEvents = '';
     },
 
-    get filterEvents(): Array<Event> {
-      const events = this.pickingEvents;
-      const step = this.fulfilmentStep.toLowerCase();
-
-      if (events.length === 0) return [];
-      const filterValues = this.filterValues[step];
-
-      let filteredEvents: Array<Event> = [...events];
-
-      console.log(filterValues);
-
-      filteredEvents.filter((event: any) =>
-        Object.entries(filterValues)
-          .filter(([, option]: [string, string]) => !!option)
-          .reduce((prev, [col, option]) => prev && event[col] == option, true),
-      );
-
-      return filteredEvents;
-    },
-
     updateFilterValueByKey(data: FilterValue): void {
       const filterValues = this.filterValues;
-      const step = this.fulfilmentStep.toLowerCase();
+      const step = this.fulfilmentStep;
 
       this.filterValues = { ...filterValues, [step]: { ...filterValues[step], ...data } };
+    },
+
+    updateFulfilmentStep(step: Fulfillment): void {
+      this.fulfilmentStep = step;
     },
   });
 };
