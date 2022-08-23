@@ -1,13 +1,13 @@
 FROM node:14.18.2
 
-#RUN mkdir -p /gravimetric_web
+RUN mkdir /gravimetric_web
 WORKDIR /gravimetric_web
 
 ENV PATH /gravimetric_web/node_modules/.bin:$PATH
 
 ADD ./ /gravimetric_web/
 
-#RUN rm -rf ./node_modules
+RUN rm -rf ./node_modules
 RUN npm install
 
 RUN chmod 755 /gravimetric_web/start

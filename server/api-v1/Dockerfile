@@ -6,7 +6,7 @@ RUN export PYTHON_ENV
 
 ENV PYTHONUNBUFFERED 1
 
-#RUN mkdir -p /gravimetric
+RUN mkdir /gravimetric
 WORKDIR /gravimetric
 
 ADD ./ /gravimetric/

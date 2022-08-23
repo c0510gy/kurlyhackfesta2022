@@ -58,17 +58,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: docker/setup-buildx-action@v2
-        id: buildx
-        with:
-          install: true
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_TOKEN }}
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -97,7 +86,7 @@ jobs:
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build --no-cache --platform linux/arm64/v8 -t $ECR_REGISTRY/$ECR_CLIENT_REPOSITORY:$IMAGE_TAG .
+          docker build -t $ECR_REGISTRY/$ECR_CLIENT_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_CLIENT_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_CLIENT_REPOSITORY:$IMAGE_TAG"
 
@@ -111,7 +100,7 @@ jobs:
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build --no-cache --platform linux/arm64/v8 -t $ECR_REGISTRY/$ECR_SERVER_REPOSITORY:$IMAGE_TAG .
+          docker build -t $ECR_REGISTRY/$ECR_SERVER_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_SERVER_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_SERVER_REPOSITORY:$IMAGE_TAG"
 
