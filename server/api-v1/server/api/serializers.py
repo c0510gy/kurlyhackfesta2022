@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import TestTable
 from simulator.models import PickingDetectionEvent, PackingDetectionEvent, DeliveryDetectionEvent
+from simulator.models import PickingSimulationInfo, PackingSimulationInfo, DeliverySimulationInfo
 
 
 class TestTableSerializer(serializers.ModelSerializer):
@@ -8,6 +9,30 @@ class TestTableSerializer(serializers.ModelSerializer):
         model = TestTable
         fields = ('id', 'user_id', 'test')
         read_only_fields = ('created_at', 'updated_at')
+
+
+class PickingSimulationInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PickingSimulationInfo
+        fields = ('id', 'num_workers', 'num_buskets',
+                  'num_products', 'human_error', 'window_size',)
+        read_only_fields = ('created_at',)
+
+
+class PackingSimulationInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PackingSimulationInfo
+        fields = ('id', 'num_workers', 'num_packages',
+                  'num_fillings', 'human_error', 'window_size',)
+        read_only_fields = ('created_at',)
+
+
+class DeliverySimulationInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeliverySimulationInfo
+        fields = ('id', 'num_workers', 'num_packages',
+                  'num_regions', 'num_products', 'human_error', 'window_size', )
+        read_only_fields = ('created_at',)
 
 
 class PickingDetectionEventSerializer(serializers.ModelSerializer):
