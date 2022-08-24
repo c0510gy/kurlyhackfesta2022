@@ -7,6 +7,7 @@ interface RadioObject {
 
 interface PropsRadioButtonGroup {
   style?: React.CSSProperties;
+  id: string;
   value: string;
   text: string;
   radioObject: RadioObject;
@@ -19,6 +20,7 @@ const defaultStyle: React.CSSProperties = {
 
 const RadioButtonGroup: React.FunctionComponent<PropsRadioButtonGroup> = ({
   style,
+  id,
   value,
   text,
   radioObject,
@@ -35,6 +37,7 @@ const RadioButtonGroup: React.FunctionComponent<PropsRadioButtonGroup> = ({
           return (
             <label key={index} className={styles.label}>
               <input
+                id={id}
                 style={{ ...style, ...defaultStyle }}
                 className={styles.input}
                 type={'radio'}
@@ -44,7 +47,8 @@ const RadioButtonGroup: React.FunctionComponent<PropsRadioButtonGroup> = ({
                 onChange={onChangeHandler}
               />
               <div className={styles.checkmark} />
-              {item}%
+              {item}
+              {id === 'errorRate' ? '%' : ''}
             </label>
           );
         })}
