@@ -2,11 +2,13 @@ $font-stack: Apple SD Gothic Neo, sans-serif;
 
 /* colors */
 $black: #000000;
-$body-grey: #acacac;
+$body-grey: #f9f9f9;
 $charcoal: #545454;
 $dark-charcoal: #4c4c4c;
+$error: #f45790;
 $red: #ff0000;
 $grey: #efefef;
+$grey1: #dedede;
 $greyish-black: #333333;
 $kurly-signature: #5f0180;
 $light-purple: #e6e6fa;
@@ -15,5 +17,5 @@ $white: #ffffff;
 
 @mixin alignContent {
   margin: 0 auto;
-  padding: 0 110px;
+  padding: 0 80px;
 }

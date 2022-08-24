@@ -3,9 +3,9 @@ import { observer } from 'mobx-react-lite';
 import { Fulfillment } from '../../../../stores/event/type';
 import { EventColumn, mappingPlaceholder } from '../../type';
 import useStores from '../../../../hooks/useStores';
-import SelectFilter from '../../../../components/ReusableElements/Select';
-import { testOption } from '../../../../stores/event';
+import SelectFilter, { Option } from '../../../../components/ReusableElements/Select';
 import styles from './index.module.scss';
+import moment from 'moment';
 
 const tableColumnByStep: { [key: string]: EventColumn[] } = {
   [Fulfillment.picking]: [
@@ -15,12 +15,29 @@ const tableColumnByStep: { [key: string]: EventColumn[] } = {
     EventColumn.product_id,
     EventColumn.weight,
     EventColumn.operation,
-    // EventColumn.label,
     EventColumn.pred,
     EventColumn.created_at,
   ],
-  [Fulfillment.packing]: [],
-  [Fulfillment.delivery]: [],
+  [Fulfillment.packing]: [
+    EventColumn.id,
+    EventColumn.worker_id,
+    EventColumn.package_id,
+    EventColumn.filling_id,
+    EventColumn.weight,
+    EventColumn.operation,
+    EventColumn.pred,
+    EventColumn.created_at,
+  ],
+  [Fulfillment.delivery]: [
+    EventColumn.id,
+    EventColumn.worker_id,
+    EventColumn.package_id,
+    EventColumn.region_id,
+    EventColumn.weight,
+    EventColumn.operation,
+    EventColumn.pred,
+    EventColumn.created_at,
+  ],
 };
 
 const ListView: React.FunctionComponent = () => {
@@ -37,7 +54,11 @@ const ListView: React.FunctionComponent = () => {
               {tableColumnByStep[eventStore.fulfilmentStep].map((col: EventColumn, index) => {
                 return (
                   <th key={index}>
-                    <SelectFilter placeholder={mappingPlaceholder[col]} col={col} options={testOption} />
+                    <SelectFilter
+                      placeholder={mappingPlaceholder[col]}
+                      col={col}
+                      options={eventStore.options[eventStore.fulfilmentStep as Fulfillment][col] as Option[]}
+                    />
                   </th>
                 );
               })}
@@ -45,12 +66,27 @@ const ListView: React.FunctionComponent = () => {
           </thead>
           <tbody className={styles.tableBody}>
             {eventStore.filterEvents.map((event, index) => {
+              let pred = event[EventColumn.pred];
               return (
-                <tr key={index}>
-                  {Object.entries(event).map(([key, value], index) => {
-                    if (key === 'label') return;
+                <tr key={index} className={pred ? styles.predTr : null}>
+                  {Object.entries(event).map(([key, value]: [string, string | number | boolean], index) => {
+                    let dataValue = value;
 
-                    return <td key={index}>{value}</td>;
+                    if (key === EventColumn.label) return;
+                    if (key === EventColumn.pred) {
+                      dataValue = value ? 'True' : 'False';
+                    }
+
+                    if (key === EventColumn.created_at)
+                      dataValue = moment(value as string)
+                        .locale('ko')
+                        .format('YYYY-MM-DD HH:mm:ss') as string;
+
+                    return (
+                      <td key={index} className={pred ? styles.predTd : null}>
+                        {dataValue}
+                      </td>
+                    );
                   })}
                 </tr>
               );
