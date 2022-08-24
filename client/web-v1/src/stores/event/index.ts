@@ -126,7 +126,7 @@ const eventStore = function createEventStore() {
           this.events[step] = events;
           if (step === Fulfillment.picking) {
             events.sort((a: { busket_id: number; }, b: { busket_id: number; }) => a.busket_id > b.busket_id ? 1 : -1);
-            const tempArr:any[] = new Array(1000);
+            const tempArr:any[] = this.events['busket'] || new Array(1000);
 
             for (let i=0; i<events.length-1; ++i) {
               const currBusketId = events[i].busket_id;
@@ -142,6 +142,10 @@ const eventStore = function createEventStore() {
               
               tempArr[currBusketId] = events[i];
             }
+
+            if (!tempArr[events[events.length-1].busket_id].pred)
+              tempArr[events[events.length-1].busket_id] = events[events.length-1];
+              
             
             this.events['busket'] = tempArr;
           }
