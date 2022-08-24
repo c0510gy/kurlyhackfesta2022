@@ -5,15 +5,10 @@ import useStores from '../hooks/useStores';
 
 const Layouts: React.FunctionComponent = () => {
   const { authStore } = useStores();
-  /* TODO : Remove the below button  */
-  const printT = (): void => {
-    authStore.fetchTest();
-  };
 
   return (
     <>
       <Header />
-      <button onClick={printT}>token print</button>
       <Outlet />
     </>
   );
