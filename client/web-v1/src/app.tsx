@@ -23,6 +23,7 @@ const App = (): JSX.Element => {
   useEffect(() => {
     const step = location.pathname.slice(1);
     eventStore.updateFulfilmentStep(step as Fulfillment);
+    eventStore.resetFilterValues();
   }, [location]);
 
   return (

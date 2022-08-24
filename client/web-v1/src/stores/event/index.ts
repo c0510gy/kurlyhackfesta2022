@@ -2,10 +2,11 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import axios from 'axios';
 import configs from '../../configs';
 import moment from 'moment';
-import useStores from '../../hooks/useStores';
 import { Option } from '../../components/ReusableElements/Select';
 import { EventColumn, Event } from '../../pages/Picking/type';
 import { FilterValue, Fulfillment } from './type';
+import { Simulator } from '../../components/ContentElements/RadioButtonGroup/type';
+import authStore from '../auth';
 
 export const initFilterValues: { [key: string]: { [key: string]: Option | Option[] } } = {
   [Fulfillment.picking]: {
@@ -85,22 +86,59 @@ const eventStore = function createEventStore() {
       return filteredEvents;
     },
 
-    async loadEvents(): Promise<void> {
-      const { authStore } = useStores();
-      const step = this.fulfilmentStep;
-      this.event = { ...this.event };
+    async startSimulator(simulator: Simulator): Promise<void> {
+      const { simulation: step, errorRate } = simulator;
 
-      if (!step) return;
+      if (!step || !errorRate) return;
 
       try {
-        const getIdToken = await authStore.getIdToken();
+        const getIdToken = await authStore().getIdToken();
+        await axios.post(
+          `${configs.backendEndPoint}/simulator/start/${step}/`,
+          {},
+          {
+            params: {
+              her: errorRate,
+              min_interval: 0.1,
+              max_interval: 0.2,
+            },
+            headers: { Authorization: `Bearer ${getIdToken}` },
+          },
+        );
+      } catch (error) {
+        throw error;
+      }
+    },
 
-        const { data: optionsInfo } = await axios.get(`${configs.backendEndPoint}/api/info/${step}`, {
+    async loadSimulatorStatus(): Promise<void> {
+      try {
+        const getIdToken = await authStore().getIdToken();
+
+        const { data } = await axios.get(`${configs.backendEndPoint}/simulator/status/`, {
           params: {},
           headers: { Authorization: `Bearer ${getIdToken}` },
         });
 
-        const { data: events } = await axios.get(`${configs.backendEndPoint}/api/events/${step}`, {
+        console.log('data', data);
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    async loadEvents(): Promise<void> {
+      const step = this.fulfilmentStep;
+
+      if (!step) return;
+
+      try {
+        const getIdToken = await authStore().getIdToken();
+
+        const { data: optionsInfo } = await axios.get(`${configs.backendEndPoint}/api/info/${step}/`, {
+          params: {},
+          headers: { Authorization: `Bearer ${getIdToken}` },
+        });
+
+        const { data: events } = await axios.get(`${configs.backendEndPoint}/api/events/${step}/`, {
           params: { limits: 1000 },
           headers: { Authorization: `Bearer ${getIdToken}` },
         });
@@ -108,7 +146,6 @@ const eventStore = function createEventStore() {
         /*  TODO : make it as a function
             set options
         */
-
         const id: Option[] = [];
         const createdAt: Option[] = [];
         const weight: Option[] = [];
@@ -124,9 +161,12 @@ const eventStore = function createEventStore() {
 
         runInAction(() => {
           this.events[step] = events;
+
           if (step === Fulfillment.picking) {
             events.sort((a: { busket_id: number }, b: { busket_id: number }) => (a.busket_id > b.busket_id ? 1 : -1));
-            const tempArr: any[] = this.events['busket'] || new Array(1000);
+            const tempArr: Event[] =
+              (this.events['busket'] && (this.events['busket'].length ? this.events['busket'] : new Array(1000))) ||
+              new Array(1000);
 
             for (let i = 0; i < events.length - 1; ++i) {
               const currBusketId = events[i].busket_id;
@@ -223,6 +263,13 @@ const eventStore = function createEventStore() {
 
     updateFulfilmentStep(step: Fulfillment): void {
       this.fulfilmentStep = step;
+    },
+    resetFilterValues(): void {
+      this.filterValues = {
+        picking: initFilterValues[Fulfillment.picking],
+        packing: initFilterValues[Fulfillment.packing],
+        delivery: initFilterValues[Fulfillment.delivery],
+      };
     },
   });
 };
