@@ -66,20 +66,24 @@ const ListView: React.FunctionComponent = () => {
           </thead>
           <tbody className={styles.tableBody}>
             {eventStore.filterEvents.map((event, index) => {
+              let pred = event[EventColumn.pred];
               return (
-                <tr key={index}>
+                <tr key={index} className={pred ? styles.predTr : null}>
                   {Object.entries(event).map(([key, value]: [string, string | number | boolean], index) => {
                     let dataValue = value;
-                    let colorByStatus: React.CSSProperties = null;
+
                     if (key === EventColumn.label) return;
-                    if (key === EventColumn.pred) dataValue = value ? 'True' : 'False';
+                    if (key === EventColumn.pred) {
+                      dataValue = value ? 'True' : 'False';
+                    }
+
                     if (key === EventColumn.created_at)
                       dataValue = moment(value as string)
                         .locale('ko')
                         .format('YYYY-MM-DD HH:mm:ss') as string;
 
                     return (
-                      <td style={colorByStatus} key={index}>
+                      <td key={index} className={pred ? styles.predTd : null}>
                         {dataValue}
                       </td>
                     );

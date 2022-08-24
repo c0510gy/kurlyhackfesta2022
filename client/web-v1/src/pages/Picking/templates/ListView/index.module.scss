@@ -9,7 +9,7 @@
     table {
       display: table;
       width: 100%;
-      border-collapse: separate;
+      border-collapse: collapse;
       border-spacing: 0;
       background-color: $white;
 
@@ -43,13 +43,13 @@
         display: table-row-group;
 
         tr {
-          border: 1px solid $greyish-black;
           color: inherit;
           display: table-row;
           vertical-align: middle;
           outline: 0;
 
-          td {
+          td,
+          .predTd {
             font-weight: 400;
             font-size: 0.875rem;
             line-height: 1.43;
@@ -58,8 +58,16 @@
             vertical-align: inherit;
             text-align: left;
             padding: 16px;
-            color: rgba(0, 0, 0, 0.87);
           }
+          .predTd {
+            color: $white;
+            font-weight: 600;
+          }
+        }
+        .predTr {
+          background-color: $error;
+          color: $white;
+          border-bottom: 1px solid $white;
         }
       }
     }

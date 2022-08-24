@@ -53,26 +53,8 @@ const BasketView = () => {
     return errorBasketSum;
   };
 
-  // temp function for test
-  const changePickingEventHandler = () => {
-    const basketIndex = getRandomInt(1000, 0);
-    const workerId = getRandomInt(5, 0);
-    const productId = getRandomInt(10, 0);
-    const pred = getRandomInt(2, 0) === 1;
-    if (eventStore.events.busket[basketIndex]?.pred) return;
-    pickingListErrorSum[basketIndex] = {
-      worker_id: workerId,
-      busket_id: basketIndex,
-      product_id: productId,
-      pred: pred,
-    };
-    const [row, col] = [Math.floor(basketIndex / 100), Math.floor(Math.floor(basketIndex % 100) / 5)];
-    countErrorBaskets(pickingListErrorSum[row][col], row, col);
-  };
-
   return (
     <div className={styles.basketView}>
-      <button onClick={changePickingEventHandler}>random create</button>
       <table>
         <tbody className={styles.tableBody}>
           {pickingListErrorSum.map((row: any, rowIdx: number) => {
@@ -80,14 +62,20 @@ const BasketView = () => {
               <tr key={rowIdx}>
                 {row.map((value: number, colIdx: number) => {
                   const errorBasketSum = countErrorBaskets(value, rowIdx, colIdx);
+                  console.log('pickingListErrorSum[rowIdx][colIdx]', pickingListErrorSum[rowIdx][colIdx]);
                   return (
                     <td
                       key={colIdx}
                       className={rowIdx % 2 ? styles.tdEnter : styles.tdNoEnter}
                       style={
                         errorBasketSum
-                          ? { color: 'red', backgroundColor: 'pink', cursor: 'pointer' }
-                          : { backgroundColor: 'rgba(99 163 230)', cursor: 'default' }
+                          ? {
+                              backgroundColor: '#f45790',
+                              fontWeight: 900,
+                              color: 'white',
+                              cursor: 'pointer',
+                            }
+                          : { backgroundColor: '#bbdefb', cursor: 'default' }
                       }
                       data-tip={'tooltips'}
                       data-for={rowIdx.toString() + colIdx.toString()}
