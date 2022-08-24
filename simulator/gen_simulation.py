@@ -36,7 +36,7 @@ def create_products(num_products):
     products = []
     for _ in range(num_products):
         m = random.random()
-        p = random.random() * 0.1  # ~ 3% error margin
+        p = random.random() * 0.1  # ~ 10% error margin
         std = get_std(m, p)
         #std = 0.05
         products.append((m, std, p))
@@ -218,13 +218,13 @@ def create_delivery(num_orders, num_products, num_regions, num_workers, pallet_e
 if __name__ == '__main__':
 
     num_orders = 1000
-    num_products = 10
-    num_workers = 2
+    num_products = 100
+    num_workers = 15
     num_fillings = 2
-    num_regions = 50
+    num_regions = 17
     pallet_error_margin = 0.0005
 
-    human_error_rate = 0.02
+    human_error_rate = 0.50
 
     picking_df, product_df = create_picking(
         num_orders, num_products, num_workers, human_error_rate)

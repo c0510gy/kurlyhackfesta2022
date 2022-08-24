@@ -14,14 +14,25 @@ def picking_simulation(her=None, winsize=-1, min_interval=0.1, max_interval=0.2)
     print('picking simulation started')
     print(her, winsize, min_interval, max_interval)
 
+    if her is None:
+        her = 1
+
+    hers = '003'
+    if her == 1.:
+        hers = '010'
+    if her == 2.:
+        hers = '020'
+    if her == 50.:
+        hers = '50'
+
     PickingDetectionEvent.objects.all().delete()
     PickingSimulationInfo.objects.all().delete()
 
     module_dir = os.path.dirname(__file__)
     log_file_path = os.path.join(
-        module_dir, 'simulation_data', 'picking_df.csv')
+        module_dir, f'simulation_data/dataset_{hers}', 'picking_df.csv')
     info_file_path = os.path.join(
-        module_dir, 'simulation_data', 'picking_info_df.csv')
+        module_dir, f'simulation_data/dataset_{hers}', 'picking_info_df.csv')
 
     log_df = pd.read_csv(log_file_path)
     info_df_row = pd.read_csv(info_file_path).iloc[0]
@@ -74,13 +85,24 @@ def packing_simulation(her=None, winsize=-1, min_interval=0.1, max_interval=0.2)
     print('packing simulation started')
     print(her, winsize, min_interval, max_interval)
 
+    if her is None:
+        her = 1
+
+    hers = '003'
+    if her == 1.:
+        hers = '010'
+    if her == 2.:
+        hers = '020'
+    if her == 50.:
+        hers = '50'
+
     PackingDetectionEvent.objects.all().delete()
     PackingSimulationInfo.objects.all().delete()
 
     module_dir = os.path.dirname(__file__)
-    file_path = os.path.join(module_dir, 'simulation_data', 'packing_df.csv')
+    file_path = os.path.join(module_dir, f'simulation_data/dataset_{hers}', 'packing_df.csv')
     info_file_path = os.path.join(
-        module_dir, 'simulation_data', 'packing_info_df.csv')
+        module_dir, f'simulation_data/dataset_{hers}', 'packing_info_df.csv')
 
     log_df = pd.read_csv(file_path)
     info_df_row = pd.read_csv(info_file_path).iloc[0]
@@ -133,13 +155,24 @@ def delivery_simulation(her=None, winsize=-1, min_interval=0.1, max_interval=0.2
     print('delivery simulation started')
     print(her, winsize, min_interval, max_interval)
 
+    if her is None:
+        her = 1
+
+    hers = '003'
+    if her == 1.:
+        hers = '010'
+    if her == 2.:
+        hers = '020'
+    if her == 50.:
+        hers = '50'
+
     DeliveryDetectionEvent.objects.all().delete()
     DeliverySimulationInfo.objects.all().delete()
 
     module_dir = os.path.dirname(__file__)
-    file_path = os.path.join(module_dir, 'simulation_data', 'delivery_df.csv')
+    file_path = os.path.join(module_dir, f'simulation_data/dataset_{hers}', 'delivery_df.csv')
     info_file_path = os.path.join(
-        module_dir, 'simulation_data', 'delivery_info_df.csv')
+        module_dir, f'simulation_data/dataset_{hers}', 'delivery_info_df.csv')
 
     log_df = pd.read_csv(file_path)
     info_df_row = pd.read_csv(info_file_path).iloc[0]

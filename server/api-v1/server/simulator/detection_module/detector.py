@@ -49,7 +49,7 @@ def test(weights, labels, window_size=-1):
 
     preds, targets = [], []
     for t in range(len(weights)):
-        pred = statistical_detection(weights, window_size=window_size)
+        pred = statistical_detection(weights[:t+1], window_size=window_size)
         preds.append(pred)
         targets.append(labels[t])
         tn, fp, fn, tp = confusion_matrix(
