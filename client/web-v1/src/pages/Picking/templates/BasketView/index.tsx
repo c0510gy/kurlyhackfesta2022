@@ -3,10 +3,6 @@ import useStores from '../../../../hooks/useStores';
 import ReactTooltip from 'react-tooltip';
 import styles from './index.module.scss';
 
-const getRandomInt = (maxNum: number, minNum: number) => {
-  return Math.floor(Math.random() * (maxNum - minNum)) + minNum;
-};
-
 const BasketView = () => {
   const [pickingListErrorSum, setPickingListErrorSum] = useState([]);
   const { eventStore } = useStores();
