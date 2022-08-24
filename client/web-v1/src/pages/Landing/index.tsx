@@ -33,6 +33,7 @@ const Landing: React.FunctionComponent = (): JSX.Element => {
 
   const startGravimetricHandler = (): void => {
     eventStore.startSimulator(value);
+    eventStore.loadSimulatorStatus();
   };
 
   return (

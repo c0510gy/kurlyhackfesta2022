@@ -2,11 +2,11 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import axios from 'axios';
 import configs from '../../configs';
 import moment from 'moment';
-import useStores from '../../hooks/useStores';
 import { Option } from '../../components/ReusableElements/Select';
 import { EventColumn, Event } from '../../pages/Picking/type';
 import { FilterValue, Fulfillment } from './type';
 import { Simulator } from '../../components/ContentElements/RadioButtonGroup/type';
+import authStore from '../auth';
 
 export const initFilterValues: { [key: string]: { [key: string]: Option | Option[] } } = {
   [Fulfillment.picking]: {
@@ -87,13 +87,12 @@ const eventStore = function createEventStore() {
     },
 
     async startSimulator(simulator: Simulator): Promise<void> {
-      const { authStore } = useStores();
       const { simulation: step, errorRate } = simulator;
 
       if (!step || !errorRate) return;
 
       try {
-        const getIdToken = await authStore.getIdToken();
+        const getIdToken = await authStore().getIdToken();
         await axios.post(
           `${configs.backendEndPoint}/simulator/start/${step}/`,
           {},
@@ -111,14 +110,28 @@ const eventStore = function createEventStore() {
       }
     },
 
+    async loadSimulatorStatus(): Promise<void> {
+      try {
+        const getIdToken = await authStore().getIdToken();
+
+        const { data } = await axios.get(`${configs.backendEndPoint}/simulator/status/`, {
+          params: {},
+          headers: { Authorization: `Bearer ${getIdToken}` },
+        });
+
+        console.log('data', data);
+      } catch (error) {
+        throw error;
+      }
+    },
+
     async loadEvents(): Promise<void> {
-      const { authStore } = useStores();
       const step = this.fulfilmentStep;
 
       if (!step) return;
 
       try {
-        const getIdToken = await authStore.getIdToken();
+        const getIdToken = await authStore().getIdToken();
 
         const { data: optionsInfo } = await axios.get(`${configs.backendEndPoint}/api/info/${step}/`, {
           params: {},
